@@ -52,6 +52,8 @@ export interface InitiativeBalance {
   share: Record<string, number>
   per_person: Record<string, number>
   total_conversations: number
+  abandoned_open: DoubleText
+  late_reply: DoubleText
   double_text: DoubleText
   evolution: Array<{ period: string } & Record<string, number>>
 }

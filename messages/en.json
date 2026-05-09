@@ -98,6 +98,7 @@
   "metrics": {
     "initiativeBalance": "Initiative balance",
     "followedUpUnanswered": "followed up unanswered",
+    "openedAndLeft": "opened and left",
     "responseDecay": "Response decay",
     "worseningOverTime": "worsening over time",
     "holdingSteady": "holding steady",

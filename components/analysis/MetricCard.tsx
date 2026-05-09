@@ -39,13 +39,41 @@ function HorizontalBar({ value, label, warm }: BarProps) {
 }
 
 // Initiative Balance card
+type SubCount = { per_person: Record<string, number>; total: number }
+
 interface InitiativeCardProps {
   share: Record<string, number>
   participants: string[]
-  doubleText?: { per_person: Record<string, number>; share: Record<string, number>; total: number }
+  abandonedOpen?: SubCount
+  doubleText?: SubCount
 }
 
-export function InitiativeCard({ share, participants, doubleText }: InitiativeCardProps) {
+function MiniRow({ label, counts, participants }: { label: string; counts: SubCount; participants: string[] }) {
+  return (
+    <>
+      <div className="h-px bg-[var(--border)]" />
+      <div className="flex flex-col gap-2">
+        <span className="text-[10px] font-mono text-[var(--text-muted)] tracking-widest uppercase">
+          {label}
+        </span>
+        <div className="flex gap-3 flex-wrap">
+          {participants.map(p => {
+            const count = counts.per_person[p] ?? 0
+            if (!count) return null
+            return (
+              <span key={p} className="text-xs font-mono text-[var(--text-muted)]">
+                {p.split(' ')[0]}
+                <span className="ml-1" style={{ color: 'var(--warm)' }}>{count}×</span>
+              </span>
+            )
+          })}
+        </div>
+      </div>
+    </>
+  )
+}
+
+export function InitiativeCard({ share, participants, abandonedOpen, doubleText }: InitiativeCardProps) {
   const t = useTranslations('metrics')
   return (
     <MetricCardWrapper title={t('initiativeBalance')}>
@@ -56,27 +84,12 @@ export function InitiativeCard({ share, participants, doubleText }: InitiativeCa
           ))}
         </div>
 
+        {abandonedOpen && abandonedOpen.total > 0 && (
+          <MiniRow label={t('openedAndLeft')} counts={abandonedOpen} participants={participants} />
+        )}
+
         {doubleText && doubleText.total > 0 && (
-          <>
-            <div className="h-px bg-[var(--border)]" />
-            <div className="flex flex-col gap-2">
-              <span className="text-[10px] font-mono text-[var(--text-muted)] tracking-widest uppercase">
-                {t('followedUpUnanswered')}
-              </span>
-              <div className="flex gap-3 flex-wrap">
-                {participants.map(p => {
-                  const count = doubleText.per_person[p] ?? 0
-                  if (!count) return null
-                  return (
-                    <span key={p} className="text-xs font-mono text-[var(--text-muted)]">
-                      {p.split(' ')[0]}
-                      <span className="ml-1" style={{ color: 'var(--warm)' }}>{count}×</span>
-                    </span>
-                  )
-                })}
-              </div>
-            </div>
-          </>
+          <MiniRow label={t('followedUpUnanswered')} counts={doubleText} participants={participants} />
         )}
       </div>
     </MetricCardWrapper>

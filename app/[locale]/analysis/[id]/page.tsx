@@ -181,6 +181,7 @@ export default function AnalysisPage({ params }: PageProps) {
                   <InitiativeCard
                     share={temporal.initiative_balance.share}
                     participants={participants}
+                    abandonedOpen={temporal.initiative_balance.abandoned_open}
                     doubleText={temporal.initiative_balance.double_text}
                   />
                 </motion.div>

@@ -98,6 +98,7 @@
   "metrics": {
     "initiativeBalance": "Balance de iniciativa",
     "followedUpUnanswered": "siguió sin respuesta",
+    "openedAndLeft": "abrió y se fue",
     "responseDecay": "Deterioro de respuesta",
     "worseningOverTime": "empeorando con el tiempo",
     "holdingSteady": "manteniéndose estable",
