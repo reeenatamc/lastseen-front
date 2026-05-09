@@ -23,7 +23,7 @@ export function Input({ label, error, className = '', id, ...props }: InputProps
       <input
         id={inputId}
         className={`
-          w-full bg-[var(--surface)] border px-4 py-3 text-sm font-mono
+          w-full bg-[var(--surface)] border px-4 py-3 min-h-[44px] text-sm font-mono
           text-[var(--text-primary)] placeholder-[var(--text-muted)]
           outline-none transition-colors duration-200
           ${error

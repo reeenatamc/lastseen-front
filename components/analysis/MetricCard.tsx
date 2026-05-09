@@ -27,7 +27,7 @@ function HorizontalBar({ value, label, warm }: BarProps) {
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <span className="text-xs font-mono text-[var(--text-muted)] tracking-wide">{label}</span>
+        <span className="text-xs font-mono text-[var(--text-muted)] tracking-wide truncate">{label}</span>
       )}
       <div className="h-1.5 w-full bg-[var(--border)] overflow-hidden">
         <motion.div
@@ -279,7 +279,7 @@ interface MetricCardWrapperProps {
 
 export function MetricCardWrapper({ title, children }: MetricCardWrapperProps) {
   return (
-    <div className="h-full bg-[var(--surface)] border border-[var(--border)] p-6 flex flex-col">
+    <div className="h-full bg-[var(--surface)] border border-[var(--border)] p-4 md:p-6 flex flex-col">
       <span className="text-xs uppercase tracking-widest text-[var(--text-muted)] font-mono">
         {title}
       </span>

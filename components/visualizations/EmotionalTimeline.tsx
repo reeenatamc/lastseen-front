@@ -97,26 +97,26 @@ export function EmotionalTimeline({ evolution, participants }: EmotionalTimeline
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-widest text-[var(--text-muted)] font-mono">
+      <div className="flex flex-wrap items-center gap-3 justify-between">
+        <span className="text-xs uppercase tracking-widest text-[var(--text-muted)] font-mono shrink-0">
           {t('emotionalTimeline')}
         </span>
-        <div className="flex gap-4">
+        <div className="flex gap-3 flex-wrap">
           {participants.map(p => (
-            <span key={p} className="flex items-center gap-1.5 text-xs font-mono text-[var(--text-muted)]">
+            <span key={p} className="flex items-center gap-1.5 text-xs font-mono text-[var(--text-muted)] min-w-0">
               <span
-                className="inline-block w-3 h-px"
+                className="inline-block w-3 h-px shrink-0"
                 style={{
                   backgroundColor: p === warmParticipant ? 'var(--warm)' : 'var(--text-primary)',
                 }}
               />
-              {p}
+              <span className="truncate max-w-[120px]">{p}</span>
             </span>
           ))}
         </div>
       </div>
 
-      <div className="h-56">
+      <div className="h-44 md:h-56">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={evolution} margin={{ top: 4, right: 4, bottom: 0, left: -16 }}>
             <CartesianGrid stroke="#1f1f1f" strokeDasharray="0" vertical={false} />

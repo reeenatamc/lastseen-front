@@ -138,9 +138,9 @@ export default function AnalysisPage({ params }: PageProps) {
         variants={fadeIn}
         initial="hidden"
         animate="visible"
-        className="px-8 py-6 flex items-center justify-between"
+        className="px-4 md:px-8 py-6 flex items-center justify-between"
       >
-        <span className="text-xs font-mono text-[var(--text-muted)] tracking-widest uppercase">
+        <span className="text-xs font-mono text-[var(--text-muted)] tracking-widest uppercase min-w-0 mr-4 truncate">
           <Link href="/" className="hover:text-[var(--text-primary)] transition-colors">
             LASTSEEN
           </Link>
@@ -150,7 +150,7 @@ export default function AnalysisPage({ params }: PageProps) {
         <LangToggle />
       </motion.div>
 
-      <div className="max-w-3xl mx-auto px-6 pb-32">
+      <div className="max-w-3xl mx-auto px-4 md:px-6 pb-32">
         {/* Chapter 2 — Narrative */}
         <AnimatePresence>
           {(chapter === 'narrative' || chapter === 'metrics' || chapter === 'charts') && (
@@ -250,7 +250,7 @@ export default function AnalysisPage({ params }: PageProps) {
               {/* Emotional Timeline */}
               {!sentiment.error && sentiment.evolution?.length > 0 && (
                 <ChapterReveal scrollTriggered>
-                  <div className="border border-[var(--border)] bg-[var(--surface)] p-8">
+                  <div className="border border-[var(--border)] bg-[var(--surface)] p-4 md:p-8">
                     <EmotionalTimeline
                       evolution={sentiment.evolution}
                       participants={participants}
@@ -262,7 +262,7 @@ export default function AnalysisPage({ params }: PageProps) {
               {/* Silence Map */}
               {temporal.activity_patterns.by_month?.length > 0 && (
                 <ChapterReveal scrollTriggered>
-                  <div className="border border-[var(--border)] bg-[var(--surface)] p-8">
+                  <div className="border border-[var(--border)] bg-[var(--surface)] p-4 md:p-8">
                     <SilenceMap byMonth={temporal.activity_patterns.by_month} />
                   </div>
                 </ChapterReveal>
@@ -271,7 +271,7 @@ export default function AnalysisPage({ params }: PageProps) {
               {/* Frequency Chart */}
               {temporal.activity_patterns.by_month?.length > 0 && (
                 <ChapterReveal scrollTriggered>
-                  <div className="border border-[var(--border)] bg-[var(--surface)] p-8">
+                  <div className="border border-[var(--border)] bg-[var(--surface)] p-4 md:p-8">
                     <FrequencyChart byMonth={temporal.activity_patterns.by_month} />
                   </div>
                 </ChapterReveal>

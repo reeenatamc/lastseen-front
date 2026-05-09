@@ -16,7 +16,7 @@ export function LangToggle() {
   return (
     <button
       onClick={toggle}
-      className="text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors tracking-widest"
+      className="min-h-[44px] min-w-[44px] flex items-center justify-center text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors tracking-widest"
     >
       {t('toggle')}
     </button>

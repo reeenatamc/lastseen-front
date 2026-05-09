@@ -29,11 +29,11 @@ export function SilenceMap({ byMonth }: SilenceMapProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-widest text-[var(--text-muted)] font-mono">
+      <div className="flex flex-wrap items-center gap-3 justify-between">
+        <span className="text-xs uppercase tracking-widest text-[var(--text-muted)] font-mono shrink-0">
           {t('silenceMap')}
         </span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="text-xs font-mono text-[var(--text-muted)]">{t('silenceLegend')}</span>
           <div className="flex gap-0.5">
             {[0, 0.2, 0.4, 0.6, 0.8, 1].map(v => (
@@ -52,7 +52,7 @@ export function SilenceMap({ byMonth }: SilenceMapProps) {
         {data.map((d) => (
           <div key={d.period} className="group relative">
             <div
-              className="w-6 h-6 cursor-default"
+              className="w-5 h-5 md:w-6 md:h-6 cursor-default"
               style={{ backgroundColor: intensityToColor(d.intensity) }}
               title={`${d.period}: ${d.count} messages`}
             />

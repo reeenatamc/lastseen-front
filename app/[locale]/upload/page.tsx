@@ -62,7 +62,7 @@ export default function UploadPage() {
         variants={fadeIn}
         initial="hidden"
         animate="visible"
-        className="px-8 py-6"
+        className="px-4 md:px-8 py-6"
       >
         <span className="text-xs font-mono text-[var(--text-muted)] tracking-widest uppercase">
           <Link href="/" className="hover:text-[var(--text-primary)] transition-colors">
@@ -74,7 +74,7 @@ export default function UploadPage() {
       </motion.div>
 
       {/* Main content */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12">
+      <div className="flex-1 flex items-center justify-center px-4 md:px-6 py-8 md:py-12">
         <motion.div
           variants={fadeUp}
           initial="hidden"

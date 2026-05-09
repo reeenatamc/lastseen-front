@@ -125,7 +125,7 @@ export function NarrativeCard({ narrative, onComplete }: NarrativeCardProps) {
   if (isError) {
     return (
       <motion.div variants={fadeUp} initial="hidden" animate="visible"
-        className="border border-[var(--border)] bg-[var(--surface)] p-10"
+        className="border border-[var(--border)] bg-[var(--surface)] p-6 md:p-10"
       >
         <span className="text-xs uppercase tracking-widest text-[var(--text-muted)] font-mono block mb-8">
           {t('title')}
@@ -139,7 +139,7 @@ export function NarrativeCard({ narrative, onComplete }: NarrativeCardProps) {
 
   return (
     <motion.div variants={fadeUp} initial="hidden" animate="visible"
-      className="border border-[var(--border)] bg-[var(--surface)] p-10"
+      className="border border-[var(--border)] bg-[var(--surface)] p-6 md:p-10"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
@@ -179,11 +179,11 @@ export function NarrativeCard({ narrative, onComplete }: NarrativeCardProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
-          className="min-h-[8rem] flex items-start"
+          className="min-h-[6rem] md:min-h-[8rem] flex items-start"
         >
           {manual ? (
             // Manual mode — full text, no animation
-            <p className="text-[1.35rem] leading-[1.75] text-[var(--text-primary)]"
+            <p className="text-lg md:text-[1.35rem] leading-[1.75] text-[var(--text-primary)]"
               style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif' }}
             >
               {fields[index]}
@@ -204,7 +204,7 @@ export function NarrativeCard({ narrative, onComplete }: NarrativeCardProps) {
           className="flex items-center justify-between mt-8 pt-6 border-t border-[var(--border)]"
         >
           <button onClick={goPrev} disabled={isFirst}
-            className="text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors tracking-widest uppercase disabled:opacity-0"
+            className="min-h-[44px] min-w-[44px] flex items-center text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors tracking-widest uppercase disabled:opacity-0"
           >
             {t('back')}
           </button>
@@ -214,7 +214,7 @@ export function NarrativeCard({ narrative, onComplete }: NarrativeCardProps) {
           </span>
 
           <button onClick={goNext}
-            className="text-xs font-mono text-[var(--text-primary)] hover:text-[var(--warm)] transition-colors tracking-widest uppercase"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-end text-xs font-mono text-[var(--text-primary)] hover:text-[var(--warm)] transition-colors tracking-widest uppercase"
           >
             {isLast ? t('continue') : t('next')}
           </button>
@@ -235,7 +235,7 @@ function TypingField({ text, onDone }: TypingFieldProps) {
   const { displayed, done } = useTypewriter(text, true, onDone)
 
   return (
-    <p className="text-[1.35rem] leading-[1.75] text-[var(--text-primary)]"
+    <p className="text-lg md:text-[1.35rem] leading-[1.75] text-[var(--text-primary)]"
       style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif' }}
     >
       {displayed}

@@ -37,7 +37,7 @@ export function FrequencyChart({ byMonth }: FrequencyChartProps) {
         {t('frequencyChart')}
       </span>
 
-      <div className="h-48">
+      <div className="h-44 md:h-48">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={byMonth} margin={{ top: 4, right: 4, bottom: 0, left: -16 }} barCategoryGap="20%">
             <CartesianGrid stroke="#1f1f1f" strokeDasharray="0" vertical={false} />

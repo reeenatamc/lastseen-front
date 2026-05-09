@@ -27,7 +27,7 @@ export function LoadingChapters() {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="text-2xl md:text-3xl font-serif italic text-[var(--text-primary)] text-center px-8"
+            className="text-xl md:text-3xl font-serif italic text-[var(--text-primary)] text-center px-6 md:px-8"
             style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif' }}
           >
             {PHRASES[phraseIndex]}

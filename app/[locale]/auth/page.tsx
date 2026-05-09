@@ -89,10 +89,10 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-[380px]">
         {/* Logo */}
-        <div className="mb-10 text-center">
+        <div className="mb-8 md:mb-10 text-center">
           <Link
             href="/"
             className="text-sm font-mono tracking-widest text-[var(--text-muted)] uppercase hover:text-[var(--text-primary)] transition-colors"
@@ -107,7 +107,7 @@ export default function AuthPage() {
             <button
               key={m}
               onClick={() => switchMode(m)}
-              className={`text-sm font-mono pb-1 transition-colors duration-200 ${
+              className={`min-h-[44px] flex items-end pb-1 text-sm font-mono transition-colors duration-200 ${
                 mode === m
                   ? 'text-[var(--text-primary)] border-b border-[var(--text-primary)]'
                   : 'text-[var(--text-muted)] border-b border-transparent hover:text-[var(--text-primary)]'
@@ -187,23 +187,23 @@ export default function AuthPage() {
         </AnimatePresence>
 
         {/* Toggle link */}
-        <p className="mt-6 text-xs font-mono text-[var(--text-muted)] text-center">
+        <div className="mt-6 text-xs font-mono text-[var(--text-muted)] text-center">
           {mode === 'signin' ? (
             <button
               onClick={() => switchMode('register')}
-              className="hover:text-[var(--text-primary)] transition-colors"
+              className="min-h-[44px] inline-flex items-center justify-center hover:text-[var(--text-primary)] transition-colors"
             >
               {t('toggleToRegister')}
             </button>
           ) : (
             <button
               onClick={() => switchMode('signin')}
-              className="hover:text-[var(--text-primary)] transition-colors"
+              className="min-h-[44px] inline-flex items-center justify-center hover:text-[var(--text-primary)] transition-colors"
             >
               {t('toggleToSignin')}
             </button>
           )}
-        </p>
+        </div>
       </div>
     </div>
   )

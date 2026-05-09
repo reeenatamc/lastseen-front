@@ -21,7 +21,7 @@ export function Button({
   const isDisabled = disabled || variant === 'disabled' || loading
 
   const base =
-    'inline-flex items-center justify-center px-6 py-3 text-sm tracking-widest uppercase transition-colors duration-300 font-mono outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]'
+    'inline-flex items-center justify-center px-6 py-3 min-h-[44px] text-sm tracking-widest uppercase transition-colors duration-300 font-mono outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]'
 
   const variants: Record<ButtonVariant, string> = {
     primary:

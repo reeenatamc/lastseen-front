@@ -46,8 +46,8 @@ export default function LandingPage() {
     <div className="flex flex-col min-h-screen">
 
       {/* ── Hero ── */}
-      <section className="flex flex-col items-center justify-center px-6 py-24 text-center min-h-screen relative">
-        <div className="absolute top-6 right-8">
+      <section className="flex flex-col items-center justify-center px-5 py-12 md:py-24 text-center min-h-screen relative">
+        <div className="absolute top-6 right-5 md:right-8">
           <LangToggle />
         </div>
 
@@ -55,7 +55,7 @@ export default function LandingPage() {
           variants={fadeIn}
           initial="hidden"
           animate="visible"
-          className="text-7xl md:text-9xl tracking-tight text-[var(--text-primary)]"
+          className="text-5xl sm:text-7xl md:text-7xl lg:text-9xl tracking-tight text-[var(--text-primary)]"
           style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontStyle: 'italic' }}
         >
           LASTSEEN
@@ -90,7 +90,7 @@ export default function LandingPage() {
       <SectionDivider />
 
       {/* ── Features ── */}
-      <section className="px-6 py-24 max-w-2xl mx-auto w-full">
+      <section className="px-5 md:px-6 py-16 md:py-24 max-w-2xl mx-auto w-full">
         {features.map((feature, i) => (
           <motion.div
             key={i}
@@ -113,7 +113,7 @@ export default function LandingPage() {
       <SectionDivider />
 
       {/* ── How it works ── */}
-      <section className="px-6 py-24 max-w-2xl mx-auto w-full">
+      <section className="px-5 md:px-6 py-16 md:py-24 max-w-2xl mx-auto w-full">
         <SectionTitle>{t('howTitle')}</SectionTitle>
         <div className="flex flex-col gap-8">
           {steps.map((step, i) => (
@@ -139,7 +139,7 @@ export default function LandingPage() {
       <SectionDivider />
 
       {/* ── What you'll see ── */}
-      <section className="px-6 py-24 max-w-2xl mx-auto w-full">
+      <section className="px-5 md:px-6 py-16 md:py-24 max-w-2xl mx-auto w-full">
         <SectionTitle>{t('seenTitle')}</SectionTitle>
         <div className="flex flex-col gap-10">
           {seen.map((item, i) => (
@@ -167,7 +167,7 @@ export default function LandingPage() {
       <SectionDivider />
 
       {/* ── Coming next ── */}
-      <section className="px-6 py-24 max-w-2xl mx-auto w-full">
+      <section className="px-5 md:px-6 py-16 md:py-24 max-w-2xl mx-auto w-full">
         <SectionTitle>{t('comingTitle')}</SectionTitle>
         <div className="flex flex-col gap-8">
           {coming.map((item, i) => (
@@ -192,12 +192,12 @@ export default function LandingPage() {
       <SectionDivider />
 
       {/* ── Bottom CTA ── */}
-      <section className="px-6 py-24 flex flex-col items-center text-center gap-8">
+      <section className="px-5 md:px-6 py-16 md:py-24 flex flex-col items-center text-center gap-8">
         <motion.p
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="text-2xl md:text-3xl text-[var(--text-muted)]"
+          className="text-xl md:text-2xl lg:text-3xl text-[var(--text-muted)]"
           style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontStyle: 'italic' }}
         >
           {t('closing')}
@@ -213,7 +213,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="px-6 py-8 border-t border-[var(--border)]">
+      <footer className="px-5 md:px-6 py-8 border-t border-[var(--border)]">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <span
             className="text-sm text-[var(--text-muted)]"

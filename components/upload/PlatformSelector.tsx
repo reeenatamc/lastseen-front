@@ -29,7 +29,7 @@ export function PlatformSelector({ selected, onSelect }: PlatformSelectorProps) 
       <span className="text-xs uppercase tracking-widest text-[var(--text-muted)] font-mono">
         {t('platformLabel')}
       </span>
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         {PLATFORM_OPTIONS.map((platform, i) => {
           const label = platform.id === 'whatsapp'
             ? t('whatsapp')
@@ -45,7 +45,7 @@ export function PlatformSelector({ selected, onSelect }: PlatformSelectorProps) 
               onClick={() => platform.available && onSelect(platform.id)}
               disabled={!platform.available}
               className={`
-                px-4 py-2 text-xs font-mono tracking-widest uppercase border transition-colors duration-200
+                min-h-[44px] px-4 py-2 text-xs font-mono tracking-widest uppercase border transition-colors duration-200
                 ${!platform.available
                   ? 'border-[var(--border)] text-[var(--text-muted)] cursor-not-allowed opacity-40'
                   : selected === platform.id

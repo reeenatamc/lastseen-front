@@ -68,7 +68,7 @@ export function DropZone({ onFileSelect, selectedFile, error }: DropZoneProps) {
           backgroundColor: isDragging ? '#141414' : 'transparent',
         }}
         transition={{ duration: 0.2 }}
-        className="relative border border-dashed cursor-pointer px-8 py-16 flex flex-col items-center gap-3 select-none"
+        className="relative border border-dashed cursor-pointer px-6 py-12 md:px-8 md:py-16 min-h-[180px] flex flex-col items-center justify-center gap-3 select-none"
         style={{ borderColor: 'var(--border)' }}
         whileHover={{
           borderColor: 'var(--text-muted)',
