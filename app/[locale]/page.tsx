@@ -200,7 +200,7 @@ export default function LandingPage() {
           className="text-2xl md:text-3xl text-[var(--text-muted)]"
           style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontStyle: 'italic' }}
         >
-          Some conversations end before the last message.
+          {t('closing')}
         </motion.p>
         <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ ...EASE_OUT, delay: 0.2 }}>
           <Link

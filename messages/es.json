@@ -30,7 +30,8 @@
     "coming2desc": "Quién sostiene el grupo. Quién se fue callando primero. El mapa de vínculos de una conversación.",
     "coming3title": "Telegram e iMessage.",
     "coming3desc": "Los parsers ya están construidos. El soporte completo llega en v2.",
-    "ctaBottom": "Analizá una conversación →"
+    "ctaBottom": "Analizá una conversación →",
+    "closing": "Algunas conversaciones terminan antes del último mensaje."
   },
   "auth": {
     "signin": "Iniciar sesión",
