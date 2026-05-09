@@ -117,7 +117,10 @@
     "silenceBrief": "La primera vez que la conversación se pausó. Breve, pero ahí estuvo.",
     "silenceShort": "La primera pausa real — lo suficiente para notarla, poco para preocuparse.",
     "silenceLong": "Varios días sin nada. El tipo de silencio que te hace preguntar si algo está mal.",
-    "silenceWeek": "Una semana o más sin palabras. A esa altura, el silencio ya era el idioma."
+    "silenceWeek": "Una semana o más sin palabras. A esa altura, el silencio ya era el idioma.",
+    "delayedReplies": "Tardó más de 3 horas",
+    "noDelays": "Ninguna demora significativa.",
+    "delayThreshold": "veces que tardó más de 3h en responder"
   },
   "charts": {
     "emotionalTimeline": "Línea emocional",

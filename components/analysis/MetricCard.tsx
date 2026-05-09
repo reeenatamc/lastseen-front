@@ -269,6 +269,56 @@ export function EmotionalDriftCard({ score, direction, hasError, sentimentPerPer
   )
 }
 
+// Delayed Replies card
+interface DelayedRepliesCardProps {
+  perPerson: Record<string, number>
+  total: number
+  participants: string[]
+}
+
+export function DelayedRepliesCard({ perPerson, total, participants }: DelayedRepliesCardProps) {
+  const t = useTranslations('metrics')
+
+  return (
+    <MetricCardWrapper title={t('delayedReplies')}>
+      <div className="flex flex-col gap-4 mt-4">
+        {total === 0 ? (
+          <span className="text-xs font-mono text-[var(--text-muted)]">{t('noDelays')}</span>
+        ) : (
+          <>
+            {participants.map(p => {
+              const count = perPerson[p] ?? 0
+              return (
+                <div key={p} className="flex flex-col gap-1.5">
+                  <span className="text-xs font-mono text-[var(--text-muted)] truncate">{p}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="h-1.5 flex-1 bg-[var(--border)] overflow-hidden">
+                      <div
+                        className="h-full transition-all duration-700"
+                        style={{
+                          width: `${total > 0 ? (count / total) * 100 : 0}%`,
+                          backgroundColor: count > total * 0.6 ? 'var(--warm)' : 'var(--text-primary)',
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs font-mono text-[var(--text-muted)] w-6 text-right shrink-0">
+                      {count}×
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+            <span className="text-[10px] font-mono text-[var(--text-muted)]">
+              {t('delayThreshold')}
+            </span>
+          </>
+        )}
+      </div>
+    </MetricCardWrapper>
+  )
+}
+
+
 // Wrapper
 interface MetricCardWrapperProps {
   title: string

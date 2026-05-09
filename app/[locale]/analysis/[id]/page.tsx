@@ -12,6 +12,7 @@ import {
   ResponseDecayCard,
   SilenceOnsetCard,
   EmotionalDriftCard,
+  DelayedRepliesCard,
 } from '@/components/analysis/MetricCard'
 import { ChapterReveal } from '@/components/analysis/ChapterReveal'
 import { EmotionalTimeline } from '@/components/visualizations/EmotionalTimeline'
@@ -214,6 +215,7 @@ export default function AnalysisPage({ params }: PageProps) {
                   initial="hidden"
                   animate="visible"
                   transition={{ ...EASE_OUT, delay: 0.36 }}
+                  className="h-full"
                 >
                   <EmotionalDriftCard
                     score={sentiment.emotional_drift?.score ?? 0}
@@ -222,6 +224,22 @@ export default function AnalysisPage({ params }: PageProps) {
                     sentimentPerPerson={!sentiment.error ? sentiment.per_person : undefined}
                   />
                 </motion.div>
+
+                {temporal.delayed_replies && (
+                  <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ ...EASE_OUT, delay: 0.48 }}
+                    className="h-full"
+                  >
+                    <DelayedRepliesCard
+                      perPerson={temporal.delayed_replies.per_person}
+                      total={temporal.delayed_replies.total}
+                      participants={participants}
+                    />
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           )}

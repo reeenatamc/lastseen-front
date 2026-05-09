@@ -117,7 +117,10 @@
     "silenceBrief": "The first time the conversation went quiet for a stretch. Brief, but it was there.",
     "silenceShort": "The first real pause — long enough to notice, short enough to explain away.",
     "silenceLong": "Several days of nothing. The kind of silence that makes you check if something is wrong.",
-    "silenceWeek": "A week or more without a word. By then, silence had become the language."
+    "silenceWeek": "A week or more without a word. By then, silence had become the language.",
+    "delayedReplies": "Took more than 3 hours",
+    "noDelays": "No significant delays.",
+    "delayThreshold": "times took more than 3h to respond"
   },
   "charts": {
     "emotionalTimeline": "Emotional timeline",

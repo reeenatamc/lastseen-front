@@ -41,6 +41,13 @@ export interface DoubleText {
   total: number
 }
 
+export interface DelayedReplies {
+  per_person: Record<string, number>
+  share: Record<string, number>
+  total: number
+  threshold_hours: number
+}
+
 export interface InitiativeBalance {
   share: Record<string, number>
   per_person: Record<string, number>
@@ -108,6 +115,7 @@ export interface AnalysisResult {
         evolution: Array<{ period: string } & Record<string, number>>
       }
       activity_patterns: ActivityPatterns
+      delayed_replies?: DelayedReplies
     }
     sentiment: {
       per_person: Record<string, SentimentPerPerson>
