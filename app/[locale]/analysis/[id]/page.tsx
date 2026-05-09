@@ -83,35 +83,25 @@ export default function AnalysisPage({ params }: PageProps) {
     }
   }, [showMetrics])
 
-  // Loading / waiting state
-  if (!tokenChecked || (chapter === 'loading' && status !== 'failed')) {
+  const hasError = status === 'failed' || (!!error && !analysis)
+
+  // Show loading while waiting — but not if there's already an error
+  if (!tokenChecked || (chapter === 'loading' && !hasError)) {
     return <LoadingChapters />
   }
 
-  // Hard error
-  if (status === 'failed' && !analysis && !error) {
+  // Unified error screen
+  if (hasError) {
+    const message = error ?? t('failed')
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-sm font-mono text-[var(--destructive)] mb-6">
-            {t('failed')}
+      <div className="min-h-screen flex items-center justify-center px-6">
+        <div className="text-center max-w-sm">
+          <p className="text-sm font-mono text-[var(--destructive)] mb-2 leading-relaxed">
+            {message}
           </p>
-          <Link
-            href="/upload"
-            className="text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors underline underline-offset-2"
-          >
-            {t('tryAgain')}
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
-  if (error && !analysis) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-sm font-mono text-[var(--destructive)] mb-6">{error}</p>
+          <p className="text-xs font-mono text-[var(--text-muted)] mb-8">
+            {t('errorHint')}
+          </p>
           <Link
             href="/upload"
             className="text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors underline underline-offset-2"

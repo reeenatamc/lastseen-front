@@ -67,7 +67,9 @@
     "failed": "El análisis falló. Intentá de nuevo.",
     "tryAgain": "Intentar de nuevo",
     "footer": "Análisis completo. Tus datos fueron eliminados de nuestros servidores.",
-    "analyzeAnother": "Analizar otra conversación"
+    "analyzeAnother": "Analizar otra conversación",
+    "errorHint": "Si el problema persiste, intentá con un archivo más pequeño.",
+    "rateLimited": "Demasiados análisis en poco tiempo. Esperá un momento e intentá de nuevo."
   },
   "narrative": {
     "title": "INTERPRETACIÓN DE LASTSEEN",

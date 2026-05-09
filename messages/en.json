@@ -67,7 +67,9 @@
     "failed": "Analysis failed. Please try again.",
     "tryAgain": "Try again",
     "footer": "Analysis complete. Your data has been deleted from our servers.",
-    "analyzeAnother": "Analyze another conversation"
+    "analyzeAnother": "Analyze another conversation",
+    "errorHint": "If the problem persists, try with a smaller file.",
+    "rateLimited": "Too many analyses in a short time. Wait a moment and try again."
   },
   "narrative": {
     "title": "LASTSEEN INTERPRETATION",

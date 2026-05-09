@@ -46,7 +46,9 @@ export default function UploadPage() {
         setLoading(false)
       }
     } catch (err) {
-      if (err instanceof ApiError) {
+      if (err instanceof ApiError && err.status === 429) {
+        setError(t('rateLimited'))
+      } else if (err instanceof ApiError) {
         setError(err.message)
       } else {
         setError('Connection error. Please try again.')
