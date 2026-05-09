@@ -126,6 +126,7 @@
     "silenceLegend": "silencio",
     "activeLegend": "activo"
   },
+  "months": ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
   "guest": {
     "title": "Ya viste lo que puede hacer.",
     "subtitle": "Creá una cuenta gratis para guardar tu historial y analizar más conversaciones.",

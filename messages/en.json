@@ -126,6 +126,7 @@
     "silenceLegend": "silence",
     "activeLegend": "active"
   },
+  "months": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
   "guest": {
     "title": "You've seen what it can do.",
     "subtitle": "Create a free account to save your history and analyze more conversations.",

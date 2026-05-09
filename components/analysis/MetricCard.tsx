@@ -5,15 +5,11 @@ import { useTranslations } from 'next-intl'
 import { formatDate } from '@/lib/utils'
 import { fadeUp } from '@/lib/motion'
 
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-
-function formatPeriod(period: string): string {
-  // "2026-Q2" → "Q2 2026"
+function formatPeriod(period: string, months: string[]): string {
   const quarterly = period.match(/^(\d{4})-Q(\d)$/)
   if (quarterly) return `Q${quarterly[2]} ${quarterly[1]}`
-  // "2026-05" → "May 2026"
   const monthly = period.match(/^(\d{4})-(\d{2})$/)
-  if (monthly) return `${MONTHS[parseInt(monthly[2], 10) - 1]} ${monthly[1]}`
+  if (monthly) return `${months[parseInt(monthly[2], 10) - 1]} ${monthly[1]}`
   return period
 }
 
@@ -104,6 +100,8 @@ function formatSeconds(s: number): string {
 
 export function ResponseDecayCard({ decayScore, trend, turningPoint, responseTimes }: ResponseDecayCardProps) {
   const t = useTranslations('metrics')
+  const months = useTranslations('months')
+  const monthNames = Array.from({ length: 12 }, (_, i) => months(`${i}` as any))
 
   const TREND_LABELS: Record<string, string> = {
     deteriorating: t('worseningOverTime'),
@@ -121,7 +119,7 @@ export function ResponseDecayCard({ decayScore, trend, turningPoint, responseTim
         {turningPoint && (
           <span className="text-xs font-mono text-[var(--text-muted)]">
             {t('shiftedIn')}{' '}
-            <span style={{ color: 'var(--warm)' }}>{formatPeriod(turningPoint)}</span>
+            <span style={{ color: 'var(--warm)' }}>{formatPeriod(turningPoint, monthNames)}</span>
           </span>
         )}
         {responseTimes && Object.keys(responseTimes).length > 0 && (
