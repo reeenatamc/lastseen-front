@@ -73,7 +73,7 @@ export default function UploadPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token: data.task_id }),
         })
-        router.push(`/es/upload/result?task=${data.task_id}`)
+        router.push(`/upload/result?task=${data.task_id}`)
         return
       }
 
