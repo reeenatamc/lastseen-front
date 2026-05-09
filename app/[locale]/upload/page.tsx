@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { DropZone } from '@/components/upload/DropZone'
 import { PlatformSelector } from '@/components/upload/PlatformSelector'
+import { GuestConversionScreen } from '@/components/upload/GuestConversionScreen'
 import { Button } from '@/components/ui/Button'
 import { Link } from '@/i18n/navigation'
 import { api, ApiError } from '@/lib/api/client'
@@ -21,6 +22,33 @@ export default function UploadPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Guest usage state — null = checking, true = already used, false = first time
+  const [guestUsed, setGuestUsed] = useState<boolean | null>(null)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    async function checkStatus() {
+      // Check auth first — if logged in, no guest restrictions apply
+      const tokenRes = await fetch('/api/auth/token')
+      const tokenData = await tokenRes.json()
+
+      if (tokenData.token) {
+        setIsAuthenticated(true)
+        setGuestUsed(false)
+        return
+      }
+
+      setIsAuthenticated(false)
+
+      // Check if guest already used their free analysis
+      const guestRes = await fetch('/api/guest')
+      const guestData = await guestRes.json()
+      setGuestUsed(!!guestData.token)
+    }
+
+    checkStatus()
+  }, [])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!file) return
@@ -32,12 +60,22 @@ export default function UploadPage() {
       const tokenRes = await fetch('/api/auth/token')
       const tokenData = await tokenRes.json()
 
-      if (!tokenRes.ok || !tokenData.token) {
-        router.push('/auth')
+      const authToken = tokenData.token ?? null
+
+      // If no auth token, redirect guests with no token to upload anyway
+      // (guestUsed check already prevents second-timers from reaching this)
+      const data = await api.upload(file, authToken, platform)
+
+      // If guest, store the token so next visit shows conversion screen
+      if (!authToken && data.task_id) {
+        await fetch('/api/guest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: data.task_id }),
+        })
+        router.push(`/es/upload/result?task=${data.task_id}`)
         return
       }
-
-      const data = await api.upload(file, tokenData.token, platform)
 
       if (data.analysis_id != null) {
         router.push(`/analysis/${data.analysis_id}`)
@@ -55,6 +93,25 @@ export default function UploadPage() {
       }
       setLoading(false)
     }
+  }
+
+  // Still checking — don't flash the wrong screen
+  if (guestUsed === null) return null
+
+  // Guest already used their free analysis — show conversion screen
+  if (guestUsed && !isAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <motion.div variants={fadeIn} initial="hidden" animate="visible" className="px-4 md:px-8 py-6">
+          <span className="text-xs font-mono text-[var(--text-muted)] tracking-widest uppercase">
+            <Link href="/" className="hover:text-[var(--text-primary)] transition-colors">
+              LASTSEEN
+            </Link>
+          </span>
+        </motion.div>
+        <GuestConversionScreen />
+      </div>
+    )
   }
 
   return (
@@ -85,18 +142,10 @@ export default function UploadPage() {
           className="w-full max-w-[520px]"
         >
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-            <DropZone
-              onFileSelect={setFile}
-              selectedFile={file}
-              error={error}
-            />
+            <DropZone onFileSelect={setFile} selectedFile={file} error={error} />
 
-            <PlatformSelector
-              selected={platform}
-              onSelect={setPlatform}
-            />
+            <PlatformSelector selected={platform} onSelect={setPlatform} />
 
-            {/* Privacy note */}
             <p className="text-xs font-mono text-[var(--text-muted)] leading-relaxed">
               {t('privacy')}
             </p>

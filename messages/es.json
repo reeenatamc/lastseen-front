@@ -126,5 +126,11 @@
     "silenceLegend": "silencio",
     "activeLegend": "activo"
   },
+  "guest": {
+    "title": "Ya viste lo que puede hacer.",
+    "subtitle": "Creá una cuenta gratis para guardar tu historial y analizar más conversaciones.",
+    "cta": "Crear cuenta gratuita →",
+    "free": "es gratis, sin tarjeta"
+  },
   "lang": { "toggle": "EN" }
 }

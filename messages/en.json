@@ -126,5 +126,11 @@
     "silenceLegend": "silence",
     "activeLegend": "active"
   },
+  "guest": {
+    "title": "You've seen what it can do.",
+    "subtitle": "Create a free account to save your history and analyze more conversations.",
+    "cta": "Create free account →",
+    "free": "free, no credit card"
+  },
   "lang": { "toggle": "ES" }
 }
