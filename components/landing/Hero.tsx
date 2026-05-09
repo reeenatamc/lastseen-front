@@ -50,7 +50,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut', delay: 0.6 }}
-        className="mt-10"
+        className="mt-10 flex flex-col items-center gap-4"
       >
         <Link
           href="/auth"
@@ -58,7 +58,24 @@ export function Hero() {
         >
           {t('cta')}
         </Link>
+
+        <Link
+          href="/upload"
+          className="text-[11px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-200 tracking-wide"
+        >
+          {t('tryWithoutAccount')}
+        </Link>
       </motion.div>
+
+      {/* Counter */}
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, ease: 'easeOut', delay: 0.8 }}
+        className="absolute bottom-8 text-[10px] font-mono text-[var(--border)] tracking-widest"
+      >
+        {t('counter')}
+      </motion.p>
     </section>
   )
 }

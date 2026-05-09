@@ -2,6 +2,7 @@
 
 import { Hero } from '@/components/landing/Hero'
 import { Features } from '@/components/landing/Features'
+import { AnalysisPreview } from '@/components/landing/AnalysisPreview'
 import { PrivacyNote } from '@/components/landing/PrivacyNote'
 import { Footer } from '@/components/landing/Footer'
 
@@ -10,6 +11,7 @@ export default function LandingPage() {
     <div className="flex flex-col min-h-screen">
       <Hero />
       <Features />
+      <AnalysisPreview />
       <PrivacyNote />
       <Footer />
     </div>
