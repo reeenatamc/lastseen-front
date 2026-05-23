@@ -49,10 +49,16 @@ export const api = {
     }).then(r => parseResponse<{ access_token: string; token_type: string }>(r))
   },
 
-  upload: (file: File, token: string, platform = 'whatsapp'): Promise<UploadResponse> => {
+  upload: (
+    file: File,
+    token: string,
+    platform = 'whatsapp',
+    language = 'auto',
+  ): Promise<UploadResponse> => {
     const form = new FormData()
     form.append('file', file)
     form.append('platform', platform)
+    form.append('language', language)
     return fetch(`${BASE}/api/v1/upload/`, {
       method: 'POST',
       headers: authHeaders(token),

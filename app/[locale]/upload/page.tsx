@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { DropZone } from '@/components/upload/DropZone'
 import { PlatformSelector } from '@/components/upload/PlatformSelector'
+import { LanguageSelector } from '@/components/upload/LanguageSelector'
 import { GuestConversionScreen } from '@/components/upload/GuestConversionScreen'
 import { Button } from '@/components/ui/Button'
 import { Link } from '@/i18n/navigation'
@@ -13,12 +14,14 @@ import { api, ApiError } from '@/lib/api/client'
 import { fadeIn, fadeUp, EASE_OUT } from '@/lib/motion'
 
 type Platform = 'whatsapp' | 'telegram' | 'imessage'
+type Language = 'es' | 'en'
 
 export default function UploadPage() {
   const router = useRouter()
   const t = useTranslations('upload')
   const [file, setFile] = useState<File | null>(null)
   const [platform, setPlatform] = useState<Platform>('whatsapp')
+  const [language, setLanguage] = useState<Language>('es')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -61,13 +64,25 @@ export default function UploadPage() {
       const tokenData = await tokenRes.json()
 
       const authToken = tokenData.token ?? null
+      const data = await api.upload(file, authToken, platform, language)
 
-      // If no auth token, redirect guests with no token to upload anyway
-      // (guestUsed check already prevents second-timers from reaching this)
-      const data = await api.upload(file, authToken, platform)
+      // 1. Authenticated success — analysis_id present. Page polls /status
+      //    until the worker finishes (analysis may take a few minutes).
+      if (data.analysis_id != null) {
+        router.push(`/analysis/${data.analysis_id}`)
+        return
+      }
 
-      // If guest, store the token so next visit shows conversion screen
-      if (!authToken && data.task_id) {
+      // 2. Got a task_id (guest-style response).
+      if (data.task_id) {
+        // 2a. We thought we were authenticated but the backend rejected the
+        //     token (expired/invalid) — clear the stale cookie and re-auth.
+        if (authToken) {
+          await fetch('/api/auth/logout', { method: 'POST' })
+          router.push('/auth')
+          return
+        }
+        // 2b. Real guest — track the task and go to the guest result poller.
         await fetch('/api/guest', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -77,12 +92,9 @@ export default function UploadPage() {
         return
       }
 
-      if (data.analysis_id != null) {
-        router.push(`/analysis/${data.analysis_id}`)
-      } else {
-        setError('Upload failed. Please try again.')
-        setLoading(false)
-      }
+      // 3. Neither analysis_id nor task_id — genuine failure.
+      setError('Upload failed. Please try again.')
+      setLoading(false)
     } catch (err) {
       if (err instanceof ApiError && err.status === 429) {
         setError(t('rateLimited'))
@@ -145,6 +157,8 @@ export default function UploadPage() {
             <DropZone onFileSelect={setFile} selectedFile={file} error={error} />
 
             <PlatformSelector selected={platform} onSelect={setPlatform} />
+
+            <LanguageSelector selected={language} onSelect={setLanguage} />
 
             <p className="text-xs font-mono text-[var(--text-muted)] leading-relaxed">
               {t('privacy')}

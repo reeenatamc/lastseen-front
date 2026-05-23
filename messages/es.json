@@ -57,7 +57,8 @@
     "errorInvalid": "Email o contraseña incorrectos",
     "errorExists": "Este email ya está registrado",
     "errorPassword": "Las contraseñas no coinciden",
-    "errorShort": "La contraseña debe tener al menos 8 caracteres"
+    "errorShort": "La contraseña debe tener al menos 8 caracteres",
+    "orContinueWith": "o con email"
   },
   "upload": {
     "breadcrumb": "LASTSEEN / analizar",
@@ -66,6 +67,9 @@
     "platformLabel": "Plataforma",
     "whatsapp": "WhatsApp",
     "comingSoon": "próximamente",
+    "languageLabel": "Idioma del chat",
+    "languageEs": "Español",
+    "languageEn": "Inglés",
     "privacy": "Tus mensajes nunca se almacenan. El procesamiento es efímero.",
     "cta": "Comenzar análisis →",
     "analyzing": "Analizando_"
@@ -138,5 +142,6 @@
     "cta": "Crear cuenta gratuita →",
     "free": "es gratis, sin tarjeta"
   },
-  "lang": { "toggle": "EN" }
+  "lang": { "toggle": "EN" },
+  "theme": { "toLight": "Cambiar a tema claro", "toDark": "Cambiar a tema oscuro" }
 }

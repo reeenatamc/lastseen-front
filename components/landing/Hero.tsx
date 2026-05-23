@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { LangToggle } from '@/components/ui/LangToggle'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 export function Hero() {
   const t = useTranslations('landing')
@@ -11,7 +12,8 @@ export function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center">
       {/* Lang toggle */}
-      <div className="absolute top-6 right-5 md:right-8">
+      <div className="absolute top-6 right-5 md:right-8 flex items-center gap-2">
+        <ThemeToggle />
         <LangToggle />
       </div>
 

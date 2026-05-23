@@ -5,7 +5,10 @@ import { api } from '@/lib/api/client'
 import type { AnalysisResult, AnalysisStatus } from '@/lib/api/types'
 import { usePolling } from './usePolling'
 
-const TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes — if still pending, surface an error
+// 15 min covers long analyses (large chats with narrative generation can take
+// 7-10 min on CPU). Worker's hard time_limit is 7 min so anything past 15 min
+// here is genuinely stuck — surface the error to the user.
+const TIMEOUT_MS = 15 * 60 * 1000
 
 interface UseAnalysisReturn {
   status: AnalysisStatus | null

@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { Link } from '@/i18n/navigation'
 import { api } from '@/lib/api/client'
 import { validate } from '@/lib/utils'
@@ -89,7 +91,10 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8">
+    <div className="relative min-h-screen flex items-center justify-center px-4 py-8">
+      <div className="absolute top-6 right-5 md:right-8">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-[380px]">
         {/* Logo */}
         <div className="mb-8 md:mb-10 text-center">
@@ -116,6 +121,21 @@ export default function AuthPage() {
               {m === 'signin' ? t('signin') : t('register')}
             </button>
           ))}
+        </div>
+
+        {/* Google sign-in */}
+        <div className="mb-6">
+          <GoogleSignInButton
+            onSuccess={() => router.push('/upload')}
+            onError={(msg) => setErrors({ general: msg })}
+          />
+          {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
+            <div className="mt-6 flex items-center gap-3 text-xs font-mono text-[var(--text-muted)]">
+              <div className="flex-1 h-px bg-[var(--border)]" />
+              <span className="uppercase tracking-widest">{t('orContinueWith')}</span>
+              <div className="flex-1 h-px bg-[var(--border)]" />
+            </div>
+          )}
         </div>
 
         {/* Form */}

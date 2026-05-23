@@ -21,6 +21,7 @@ import { FrequencyChart } from '@/components/visualizations/FrequencyChart'
 import { EASE_OUT, fadeIn, fadeUp } from '@/lib/motion'
 import { Link } from '@/i18n/navigation'
 import { LangToggle } from '@/components/ui/LangToggle'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 interface PageProps {
   params: Promise<{ id: string; locale: string }>
@@ -138,7 +139,10 @@ export default function AnalysisPage({ params }: PageProps) {
           {' / '}
           <span>{t('breadcrumb')} #{analysis.id}</span>
         </span>
-        <LangToggle />
+        <div className="flex items-center gap-2 shrink-0">
+          <ThemeToggle />
+          <LangToggle />
+        </div>
       </motion.div>
 
       <div className="max-w-3xl mx-auto px-4 md:px-6 pb-32">

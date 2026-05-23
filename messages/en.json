@@ -57,7 +57,8 @@
     "errorInvalid": "Incorrect email or password",
     "errorExists": "Email already registered",
     "errorPassword": "Passwords do not match",
-    "errorShort": "Password must be at least 8 characters"
+    "errorShort": "Password must be at least 8 characters",
+    "orContinueWith": "or with email"
   },
   "upload": {
     "breadcrumb": "LASTSEEN / analyze",
@@ -66,6 +67,9 @@
     "platformLabel": "Platform",
     "whatsapp": "WhatsApp",
     "comingSoon": "coming soon",
+    "languageLabel": "Chat language",
+    "languageEs": "Spanish",
+    "languageEn": "English",
     "privacy": "Your messages are never stored. Processing is ephemeral.",
     "cta": "Begin analysis →",
     "analyzing": "Analyzing_"
@@ -138,5 +142,6 @@
     "cta": "Create free account →",
     "free": "free, no credit card"
   },
-  "lang": { "toggle": "ES" }
+  "lang": { "toggle": "ES" },
+  "theme": { "toLight": "Switch to light theme", "toDark": "Switch to dark theme" }
 }

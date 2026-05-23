@@ -19,8 +19,19 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html className={`${instrumentSerif.variable} ${geistMono.variable} h-full`}>
-      <body className="min-h-full flex flex-col relative z-[1]">{children}</body>
+    <html
+      className={`${instrumentSerif.variable} ${geistMono.variable} h-full`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full flex flex-col relative z-[1]">
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{if(localStorage.getItem('theme')==='light')document.documentElement.classList.add('theme-light')}catch(e){}})()",
+          }}
+        />
+        {children}
+      </body>
     </html>
   )
 }

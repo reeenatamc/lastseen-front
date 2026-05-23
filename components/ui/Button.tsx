@@ -25,7 +25,7 @@ export function Button({
 
   const variants: Record<ButtonVariant, string> = {
     primary:
-      'bg-[var(--text-primary)] text-[var(--background)] hover:bg-white cursor-pointer',
+      'bg-[var(--text-primary)] text-[var(--background)] hover:opacity-90 cursor-pointer',
     ghost:
       'bg-transparent text-[var(--text-primary)] border border-[var(--border)] hover:border-[var(--text-muted)] cursor-pointer',
     disabled:

@@ -11,6 +11,18 @@
   --warm: #c8a96e;
 }
 
+/* Light theme — opt-in per subtree via .theme-light */
+.theme-light {
+  --background: #fafaf8;
+  --surface: #ffffff;
+  --border: #e3e3e0;
+  --text-primary: #0a0a0a;
+  --text-muted: #767676;
+  --accent: #0a0a0a;
+  --destructive: #cc2222;
+  --warm: #9a7b3e;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
