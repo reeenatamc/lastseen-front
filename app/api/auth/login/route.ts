@@ -34,7 +34,19 @@ export async function POST(request: NextRequest) {
     })
 
     return res
-  } catch {
+  } catch (e) {
+    // The most common cause of an unexpected throw here is the backend being
+    // unreachable (docker stack down). Surface that explicitly so the user
+    // gets a useful error instead of a silent "Internal server error" that
+    // looks identical to the wrong-credentials case and triggers an apparent
+    // re-auth loop on the /upload page.
+    console.error('[/api/auth/login] forwarding to backend failed:', e)
+    if (e instanceof TypeError && /fetch failed/i.test(e.message)) {
+      return NextResponse.json(
+        { error: 'No se puede conectar con el backend. ¿Está corriendo `docker compose up`?' },
+        { status: 503 }
+      )
+    }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
