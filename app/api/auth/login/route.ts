@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { authErrorFromStatus } from '@/lib/auth-errors'
+import { rejectCrossOrigin } from '@/lib/server/guards'
+import { setSessionCookie } from '@/lib/server/session'
 
 export async function POST(request: NextRequest) {
+  const blocked = rejectCrossOrigin(request)
+  if (blocked) return blocked
+
   try {
     const { email, password } = await request.json()
 
@@ -15,38 +21,17 @@ export async function POST(request: NextRequest) {
       body: form,
     })
 
-    const data = await response.json()
-
     if (!response.ok) {
-      return NextResponse.json(
-        { error: data.detail ?? 'Login failed' },
-        { status: response.status }
-      )
+      return NextResponse.json({ code: authErrorFromStatus(response.status) }, { status: response.status })
     }
 
+    const data = await response.json()
     const res = NextResponse.json({ success: true })
-    res.cookies.set('auth_token', data.access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    })
-
+    setSessionCookie(res, data.access_token)
     return res
   } catch (e) {
-    // The most common cause of an unexpected throw here is the backend being
-    // unreachable (docker stack down). Surface that explicitly so the user
-    // gets a useful error instead of a silent "Internal server error" that
-    // looks identical to the wrong-credentials case and triggers an apparent
-    // re-auth loop on the /upload page.
-    console.error('[/api/auth/login] forwarding to backend failed:', e)
-    if (e instanceof TypeError && /fetch failed/i.test(e.message)) {
-      return NextResponse.json(
-        { error: 'No se puede conectar con el backend. ¿Está corriendo `docker compose up`?' },
-        { status: 503 }
-      )
-    }
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    // Log the error kind only: never emails or request bodies
+    console.error('[/api/auth/login] request failed:', e instanceof Error ? e.name : 'unknown')
+    return NextResponse.json({ code: 'network' }, { status: 502 })
   }
 }

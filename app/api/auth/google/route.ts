@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { authErrorFromStatus } from '@/lib/auth-errors'
+import { rejectCrossOrigin } from '@/lib/server/guards'
+import { setSessionCookie } from '@/lib/server/session'
 
 export async function POST(request: NextRequest) {
+  const blocked = rejectCrossOrigin(request)
+  if (blocked) return blocked
+
   try {
     const { credential } = await request.json()
 
     if (!credential || typeof credential !== 'string') {
-      return NextResponse.json({ error: 'Missing credential' }, { status: 400 })
+      return NextResponse.json({ code: 'invalid_credentials' }, { status: 400 })
     }
 
     const BASE = process.env.NEXT_PUBLIC_API_URL
@@ -15,26 +21,16 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({ credential }),
     })
 
-    const data = await response.json()
-
     if (!response.ok) {
-      return NextResponse.json(
-        { error: data.detail ?? 'Google login failed' },
-        { status: response.status }
-      )
+      return NextResponse.json({ code: authErrorFromStatus(response.status) }, { status: response.status })
     }
 
+    const data = await response.json()
     const res = NextResponse.json({ success: true })
-    res.cookies.set('auth_token', data.access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    })
-
+    setSessionCookie(res, data.access_token)
     return res
-  } catch {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  } catch (e) {
+    console.error('[/api/auth/google] request failed:', e instanceof Error ? e.name : 'unknown')
+    return NextResponse.json({ code: 'network' }, { status: 502 })
   }
 }
