@@ -68,6 +68,31 @@ The frontend for LASTSEEN, a cinematic dark interface that takes the analysis fr
 
 <br/>
 
+## Screenshots
+
+Taken with a synthetic chat between two invented people (Ana and Luis). No real conversation appears here.
+
+<table>
+<tr>
+<td align="center"><img src="docs/screenshots/01-landing.jpg" width="220" alt="Landing"/><br/><sub>Landing</sub></td>
+<td align="center"><img src="docs/screenshots/02-preview.jpg" width="220" alt="Free preview: counts and schedules"/><br/><sub>Free preview: counts and schedules</sub></td>
+<td align="center"><img src="docs/screenshots/03-locked.jpg" width="220" alt="What the full report adds"/><br/><sub>What the full report adds</sub></td>
+<td align="center"><img src="docs/screenshots/04-narrative.jpg" width="220" alt="Narrative, chapter 1 of 5"/><br/><sub>Narrative, chapter 1 of 5</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/screenshots/05-metrics.jpg" width="220" alt="Initiative and response decay"/><br/><sub>Initiative and response decay</sub></td>
+<td align="center"><img src="docs/screenshots/06-tone.jpg" width="220" alt="Tone per person and conflict"/><br/><sub>Tone per person and conflict</sub></td>
+<td align="center"><img src="docs/screenshots/07-charts.jpg" width="220" alt="Silence map and message frequency"/><br/><sub>Silence map and message frequency</sub></td>
+<td align="center"><img src="docs/screenshots/08-share-card.jpg" width="220" alt="Share card"/><br/><sub>Share card</sub></td>
+</tr>
+</table>
+
+<br/>
+
+---
+
+<br/>
+
 ## Key design decisions
 
 **→ The revelation sequence is non-negotiable**
