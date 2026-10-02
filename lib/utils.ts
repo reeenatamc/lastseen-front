@@ -2,6 +2,7 @@
 
 export interface ValidationResult {
   valid: boolean
+  /** Values are keys of the `errors.validation` messages section */
   errors: Record<string, string>
 }
 
@@ -11,24 +12,24 @@ export function validate(fields: Record<string, string>): ValidationResult {
   if ('email' in fields) {
     const email = fields.email.trim()
     if (!email) {
-      errors.email = 'Email is required.'
+      errors.email = 'emailRequired'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Enter a valid email address.'
+      errors.email = 'emailInvalid'
     }
   }
 
   if ('password' in fields) {
     const password = fields.password
     if (!password) {
-      errors.password = 'Password is required.'
+      errors.password = 'passwordRequired'
     } else if (password.length < 8) {
-      errors.password = 'Password must be at least 8 characters.'
+      errors.password = 'passwordShort'
     }
   }
 
   if ('confirmPassword' in fields && 'password' in fields) {
     if (fields.confirmPassword !== fields.password) {
-      errors.confirmPassword = 'Passwords do not match.'
+      errors.confirmPassword = 'passwordMismatch'
     }
   }
 

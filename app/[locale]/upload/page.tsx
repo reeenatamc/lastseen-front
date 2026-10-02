@@ -1,16 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { DropZone } from '@/components/upload/DropZone'
 import { PlatformSelector } from '@/components/upload/PlatformSelector'
 import { LanguageSelector } from '@/components/upload/LanguageSelector'
-import { GuestConversionScreen } from '@/components/upload/GuestConversionScreen'
+import { DateRangeSelector } from '@/components/upload/DateRangeSelector'
+import { CreditPacks } from '@/components/analysis/CreditPacks'
 import { Button } from '@/components/ui/Button'
 import { Link } from '@/i18n/navigation'
+import { useCredits } from '@/hooks/useCredits'
 import { api, ApiError } from '@/lib/api/client'
+import { detectChatDateRangeFromFile } from '@/lib/chat/dateRange'
 import { fadeIn, fadeUp, EASE_OUT } from '@/lib/motion'
 
 type Platform = 'whatsapp' | 'telegram' | 'imessage'
@@ -19,38 +22,44 @@ type Language = 'es' | 'en'
 export default function UploadPage() {
   const router = useRouter()
   const t = useTranslations('upload')
+  const tPay = useTranslations('paywall')
+  const tLegal = useTranslations('legal')
+  const tReports = useTranslations('reports')
   const [file, setFile] = useState<File | null>(null)
   const [platform, setPlatform] = useState<Platform>('whatsapp')
   const [language, setLanguage] = useState<Language>('es')
+  const [detectedRange, setDetectedRange] = useState<{ first: string; last: string } | null>(null)
+  const [dateRange, setDateRange] = useState<{ from: string; to: string } | null>(null)
+  const latestFile = useRef<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Guest usage state — null = checking, true = already used, false = first time
-  const [guestUsed, setGuestUsed] = useState<boolean | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  // null while the session check is pending
+  const [token, setToken] = useState<string | null>(null)
+  const [sessionChecked, setSessionChecked] = useState(false)
+  const { balance, packs, reload } = useCredits(token)
 
   useEffect(() => {
-    async function checkStatus() {
-      // Check auth first — if logged in, no guest restrictions apply
-      const tokenRes = await fetch('/api/auth/token')
-      const tokenData = await tokenRes.json()
-
-      if (tokenData.token) {
-        setIsAuthenticated(true)
-        setGuestUsed(false)
-        return
-      }
-
-      setIsAuthenticated(false)
-
-      // Check if guest already used their free analysis
-      const guestRes = await fetch('/api/guest')
-      const guestData = await guestRes.json()
-      setGuestUsed(!!guestData.token)
-    }
-
-    checkStatus()
+    fetch('/api/auth/token')
+      .then(r => r.json())
+      .then(data => setToken(data.token ?? null))
+      .catch(() => setToken(null))
+      .finally(() => setSessionChecked(true))
   }, [])
+
+  const handleFileSelect = async (selected: File) => {
+    latestFile.current = selected
+    setFile(selected)
+    setDateRange(null)
+    setDetectedRange(null)
+    try {
+      const range = await detectChatDateRangeFromFile(selected)
+      // A slower read of a previous file must not overwrite the current one
+      if (latestFile.current === selected) setDetectedRange(range)
+    } catch {
+      if (latestFile.current === selected) setDetectedRange(null)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -64,7 +73,7 @@ export default function UploadPage() {
       const tokenData = await tokenRes.json()
 
       const authToken = tokenData.token ?? null
-      const data = await api.upload(file, authToken, platform, language)
+      const data = await api.upload(file, authToken, platform, language, dateRange)
 
       // 1. Authenticated success — analysis_id present. Page polls /status
       //    until the worker finishes (analysis may take a few minutes).
@@ -73,57 +82,30 @@ export default function UploadPage() {
         return
       }
 
-      // 2. Got a task_id (guest-style response).
+      // 2. Guest upload: go to the guest result poller.
       if (data.task_id) {
-        // 2a. We thought we were authenticated but the backend rejected the
-        //     token (expired/invalid) — clear the stale cookie and re-auth.
-        if (authToken) {
-          await fetch('/api/auth/logout', { method: 'POST' })
-          router.push('/auth')
-          return
-        }
-        // 2b. Real guest — track the task and go to the guest result poller.
-        await fetch('/api/guest', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: data.task_id }),
-        })
-        router.push(`/upload/result?task=${data.task_id}`)
+        router.push(`/upload/result?task=${encodeURIComponent(data.task_id)}`)
         return
       }
 
       // 3. Neither analysis_id nor task_id — genuine failure.
-      setError('Upload failed. Please try again.')
+      setError(t('uploadFailed'))
       setLoading(false)
     } catch (err) {
       if (err instanceof ApiError && err.status === 429) {
         setError(t('rateLimited'))
+      } else if (err instanceof ApiError && err.status === 413) {
+        setError(t('tooLarge'))
+      } else if (err instanceof ApiError && err.status === 401) {
+        // Session expired: the client already redirects to /auth
+        setError(null)
       } else if (err instanceof ApiError) {
-        setError(err.message)
+        setError(t('uploadFailed'))
       } else {
-        setError('Connection error. Please try again.')
+        setError(t('connectionError'))
       }
       setLoading(false)
     }
-  }
-
-  // Still checking — don't flash the wrong screen
-  if (guestUsed === null) return null
-
-  // Guest already used their free analysis — show conversion screen
-  if (guestUsed && !isAuthenticated) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <motion.div variants={fadeIn} initial="hidden" animate="visible" className="px-4 md:px-8 py-6">
-          <span className="text-xs font-mono text-[var(--text-muted)] tracking-widest uppercase">
-            <Link href="/" className="hover:text-[var(--text-primary)] transition-colors">
-              LASTSEEN
-            </Link>
-          </span>
-        </motion.div>
-        <GuestConversionScreen />
-      </div>
-    )
   }
 
   return (
@@ -133,7 +115,7 @@ export default function UploadPage() {
         variants={fadeIn}
         initial="hidden"
         animate="visible"
-        className="px-4 md:px-8 py-6"
+        className="px-4 md:px-8 py-6 flex items-center justify-between"
       >
         <span className="text-xs font-mono text-[var(--text-muted)] tracking-widest uppercase">
           <Link href="/" className="hover:text-[var(--text-primary)] transition-colors">
@@ -142,6 +124,14 @@ export default function UploadPage() {
           {' / '}
           <span>{t('breadcrumb').split(' / ')[1]}</span>
         </span>
+        {token && (
+          <Link
+            href="/analyses"
+            className="text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors underline underline-offset-2"
+          >
+            {tReports('link')}
+          </Link>
+        )}
       </motion.div>
 
       {/* Main content */}
@@ -154,15 +144,36 @@ export default function UploadPage() {
           className="w-full max-w-[520px]"
         >
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-            <DropZone onFileSelect={setFile} selectedFile={file} error={error} />
+            <DropZone onFileSelect={handleFileSelect} selectedFile={file} error={error} />
 
             <PlatformSelector selected={platform} onSelect={setPlatform} />
 
             <LanguageSelector selected={language} onSelect={setLanguage} />
 
+            <DateRangeSelector range={detectedRange} value={dateRange} onChange={setDateRange} />
+
             <p className="text-xs font-mono text-[var(--text-muted)] leading-relaxed">
               {t('privacy')}
             </p>
+
+            <div className="flex flex-col gap-3" aria-live="polite">
+              {sessionChecked && !token && (
+                <p className="text-xs font-mono text-[var(--text-muted)]">{tPay('upload.guest')}</p>
+              )}
+              {token && balance && !balance.is_premium && balance.credits > 0 && (
+                <p className="text-xs font-mono text-[var(--text-muted)]">
+                  {tPay('upload.withCredits', { count: balance.credits })}
+                </p>
+              )}
+              {token && balance && !balance.is_premium && balance.credits <= 0 && (
+                <>
+                  <p className="text-xs font-mono text-[var(--text-muted)]">{tPay('upload.noCredits')}</p>
+                  {packs && packs.length > 0 && (
+                    <CreditPacks packs={packs} token={token} onRefresh={reload} />
+                  )}
+                </>
+              )}
+            </div>
 
             <Button
               type="submit"
@@ -173,6 +184,13 @@ export default function UploadPage() {
             >
               {loading ? t('analyzing') : t('cta')}
             </Button>
+
+            <Link
+              href="/legal"
+              className="self-center text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors underline underline-offset-2"
+            >
+              {tLegal('link')}
+            </Link>
           </form>
         </motion.div>
       </div>

@@ -13,6 +13,7 @@ const TIMEOUT_MS = 15 * 60 * 1000
 interface UseAnalysisReturn {
   status: AnalysisStatus | null
   analysis: AnalysisResult | null
+  /** Error code: a backend code or 'timeout' / 'connection'; translate with analysisErrorKey */
   error: string | null
 }
 
@@ -32,7 +33,7 @@ export function useAnalysis(id: number, token: string | null): UseAnalysisReturn
 
       // Timeout guard — don't leave the user stuck forever
       if (Date.now() - startedAt.current > TIMEOUT_MS) {
-        setError('The analysis is taking longer than expected. Please try again.')
+        setError('timeout')
         return
       }
 
@@ -44,10 +45,10 @@ export function useAnalysis(id: number, token: string | null): UseAnalysisReturn
           const fullAnalysis = await api.getAnalysis(id, token)
           setAnalysis(fullAnalysis)
         } else if (statusData.status === 'failed') {
-          setError(statusData.error ?? 'Analysis failed. Please try again.')
+          setError(statusData.error ?? 'internal_error')
         }
       } catch {
-        setError('Connection error. Please refresh the page.')
+        setError('connection')
       }
     },
   })

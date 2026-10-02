@@ -1,8 +1,10 @@
 {
-  "nav": { "brand": "LASTSEEN" },
+  "nav": {
+    "brand": "LASTSEEN"
+  },
   "landing": {
     "tagline": "Every conversation leaves a trace. We read it.",
-    "cta": "Analyze a conversation →",
+    "cta": "Analyze a conversation",
     "feature1title": "Emotional timeline.",
     "feature1desc": "See how the tone shifted month by month.",
     "feature2title": "Silence mapping.",
@@ -10,38 +12,38 @@
     "feature3title": "Narrative AI.",
     "feature3desc": "A written interpretation in plain language.",
     "footer": "Privacy first.",
-    "tryWithoutAccount": "→ or try without an account",
+    "tryWithoutAccount": "Or try without an account",
     "counter": "3,241 conversations analyzed",
     "footerRight": "Privacy first. Built with intention.",
     "footerBy": "by reeenatamc",
-    "privacyNote": "Your messages are never stored. Processing is ephemeral.",
+    "privacyNote": "We do not store your messages. The full report uses Google Gemini, which keeps the text for 55 days to detect abuse and does not use it for training.",
     "block1title": "Emotional timeline",
     "block1desc": "See how the tone of a conversation shifted month by month. Warmth. Distance. Silence.",
     "block2title": "Silence mapping",
     "block2desc": "The gaps between messages tell a story too. LASTSEEN reads what wasn't said.",
     "block3title": "Narrative AI",
-    "block3desc": "A written interpretation in plain language. Not a summary — a story about two people.",
+    "block3desc": "A written interpretation in plain language. Not a summary, but a story about two people.",
     "howTitle": "How it works",
     "step1": "Export your WhatsApp chat without media. Just the .txt file.",
-    "step2": "Upload it. The system parses every message, calculates patterns, and runs the analysis.",
+    "step2": "You upload it. Without an account you see a preview with counts and schedules. The full report uses one credit.",
     "step3": "See the story. In chapters. Without the cold.",
     "seenTitle": "What you'll see",
     "seen1title": "Who held the relationship.",
-    "seen1desc": "Corrected initiative balance — not who messaged first, but who broke the silence when the other person wouldn't. Plus double text tracking: who followed up unanswered.",
+    "seen1desc": "Corrected initiative balance: not who messaged first, but who broke the silence when the other person wouldn't. Plus double text tracking: who followed up unanswered.",
     "seen2title": "When it started dying.",
     "seen2desc": "Response decay over time. A score from 0 to 1. A turning point date. A trend.",
     "seen3title": "The emotional climate.",
     "seen3desc": "Each person's tone by quarter. Emotional drift between them. When they diverged.",
     "seen4title": "The story in words.",
-    "seen4desc": "An AI-generated interpretation — overview, dynamic, turning point, current state, reflection. Written to feel, not to report.",
+    "seen4desc": "An AI-generated interpretation: overview, dynamic, turning point, current state, reflection. Written to feel, not to report.",
     "comingTitle": "Coming next",
     "coming1title": "Dead chat detection.",
-    "coming1desc": "The exact moment a conversation stopped being mutual. Not a score — a date.",
+    "coming1desc": "The exact moment a conversation stopped being mutual. Not a score, a date.",
     "coming2title": "Group chats.",
     "coming2desc": "Who holds the group together. Who went quiet first. The social map of a conversation.",
     "coming3title": "Telegram and iMessage.",
     "coming3desc": "Parsers already built. Full pipeline support coming in v2.",
-    "ctaBottom": "Analyze a conversation →",
+    "ctaBottom": "Analyze a conversation",
     "closing": "Some conversations end before the last message."
   },
   "auth": {
@@ -67,12 +69,22 @@
     "platformLabel": "Platform",
     "whatsapp": "WhatsApp",
     "comingSoon": "coming soon",
+    "periodLabel": "Period",
+    "periodAll": "Whole chat",
+    "periodCustom": "Choose dates",
+    "periodDetected": "From {first} to {last}",
+    "periodFrom": "From",
+    "periodTo": "To",
     "languageLabel": "Chat language",
     "languageEs": "Spanish",
     "languageEn": "English",
-    "privacy": "Your messages are never stored. Processing is ephemeral.",
-    "cta": "Begin analysis →",
-    "analyzing": "Analyzing_"
+    "privacy": "We do not store your messages: the file is processed and discarded. For the full report, the text is sent to Google Gemini without sender names and with phone numbers, emails and long numbers redacted. Google keeps it for 55 days to detect abuse and does not use it to train its models.",
+    "cta": "Begin analysis",
+    "analyzing": "Analyzing_",
+    "uploadFailed": "Could not upload the file. Try again.",
+    "connectionError": "Could not connect. Try again.",
+    "onlyTxt": "Only .txt files are accepted.",
+    "tooLarge": "The file exceeds 20 MB."
   },
   "analysis": {
     "breadcrumb": "analysis",
@@ -81,18 +93,28 @@
     "loading3": "Reconstructing the story...",
     "failed": "Analysis failed. Please try again.",
     "tryAgain": "Try again",
-    "footer": "Analysis complete. Your data has been deleted from our servers.",
+    "footer": "We do not store your messages. We keep only the report, and you can delete it.",
     "analyzeAnother": "Analyze another conversation",
     "errorHint": "If the problem persists, try with a smaller file.",
-    "rateLimited": "Too many analyses in a short time. Wait a moment and try again."
+    "rateLimited": "Too many analyses in a short time. Wait a moment and try again.",
+    "footerGuest": "We do not store your messages. This result is deleted in one hour.",
+    "errorCodes": {
+      "parse_failed": "We did not recognize the file format. Export the chat from WhatsApp without media files.",
+      "empty_date_range": "There are no messages in that date range.",
+      "chat_too_large": "The chat is too large.",
+      "timeout": "The analysis took too long. Try a shorter date range.",
+      "internal_error": "The analysis failed. If you used a credit, it was already returned.",
+      "connection": "Could not connect. Try again.",
+      "invalid_link": "The link is not valid."
+    }
   },
   "narrative": {
     "title": "LASTSEEN INTERPRETATION",
     "comingSoon": "Narrative interpretation coming soon.",
-    "skip": "skip →",
-    "back": "← back",
-    "next": "next →",
-    "continue": "continue →",
+    "skip": "skip",
+    "back": "back",
+    "next": "next",
+    "continue": "continue",
     "label0": "overview",
     "label1": "dynamic",
     "label2": "turning point",
@@ -121,12 +143,37 @@
     "neutral": "neutral",
     "distant": "distant",
     "silenceBrief": "The first time the conversation went quiet for a stretch. Brief, but it was there.",
-    "silenceShort": "The first real pause — long enough to notice, short enough to explain away.",
+    "silenceShort": "The first real pause: long enough to notice, short enough to explain away.",
     "silenceLong": "Several days of nothing. The kind of silence that makes you check if something is wrong.",
     "silenceWeek": "A week or more without a word. By then, silence had become the language.",
     "delayedReplies": "Took more than 3 hours",
     "noDelays": "No significant delays.",
-    "delayThreshold": "times took more than 3h to respond"
+    "closingPhase": "final stretch",
+    "messagesPerDay": "messages per day",
+    "ofUsual": "{pct} % of usual",
+    "longestSilence": "longest silence",
+    "before": "{days} days (before {baseline})",
+    "toneChargedNote": "based on emotionally charged messages",
+    "toneSplit": "{pos} % warm · {neg} % tense",
+    "toneMoreNegative": "more negative tone in the last {days} days",
+    "toneMorePositive": "more positive tone in the last {days} days",
+    "conflictEpisodes": "Conflict episodes",
+    "episodes": "{count, plural, one {episode} other {episodes}}",
+    "conflictRecent": "last {weeks} weeks: {ratio} times the usual",
+    "mentions": "{count, plural, one {# mention} other {# mentions}}",
+    "blocked": "block",
+    "missedCalls": "{count, plural, one {# missed call} other {# missed calls}}",
+    "noConflict": "No conflict episodes detected.",
+    "delayThreshold": "times took more than 3h to respond",
+    "overview": {
+      "title": "Overview",
+      "totalMessages": "Messages",
+      "period": "Period",
+      "range": "{start} to {end}",
+      "perPerson": "Messages per person",
+      "busiestHour": "Busiest hour",
+      "busiestDay": "Busiest day"
+    }
   },
   "charts": {
     "emotionalTimeline": "Emotional timeline",
@@ -135,13 +182,138 @@
     "silenceLegend": "silence",
     "activeLegend": "active"
   },
-  "months": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+  "months": [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ],
   "guest": {
     "title": "You've seen what it can do.",
     "subtitle": "Create a free account to save your history and analyze more conversations.",
-    "cta": "Create free account →",
+    "cta": "Create free account",
     "free": "free, no credit card"
   },
-  "lang": { "toggle": "ES" },
-  "theme": { "toLight": "Switch to light theme", "toDark": "Switch to dark theme" }
+  "lang": {
+    "toggle": "ES"
+  },
+  "theme": {
+    "toLight": "Switch to light theme",
+    "toDark": "Switch to dark theme"
+  },
+  "paywall": {
+    "title": "Full report",
+    "includes": {
+      "conflict": "{count, plural, one {# conflict episode with its dates} other {# conflict episodes with their dates}}",
+      "turningPoint": "The date the conversation changed",
+      "closingPhase": "The final stretch: how much volume dropped and how much the silences grew",
+      "tone": "Each person's tone and how it changed",
+      "initiative": "Who took the initiative",
+      "narrative": "The narrative in five chapters"
+    },
+    "loading": "Checking your balance...",
+    "guest": {
+      "cta": "Create account"
+    },
+    "reupload": {
+      "cta": "Upload the chat for the full report",
+      "credit": "Uses 1 credit. You have {count}."
+    },
+    "reuploadNote": "After paying, upload the chat again. The file is not stored.",
+    "pack": "{count, plural, one {# analysis} other {# analyses}} · {price}",
+    "refresh": "I already paid, refresh balance",
+    "retry": "Retry",
+    "processor": "Payment is processed by Lemon Squeezy. We do not store card data.",
+    "unavailable": "Payments are not available yet.",
+    "upload": {
+      "guest": "Without an account you will see only the preview: counts and schedules.",
+      "withCredits": "This analysis uses 1 credit. You have {count}.",
+      "noCredits": "No credits: you will see only the preview."
+    },
+    "errors": {
+      "network": "Could not connect. Try again."
+    }
+  },
+  "share": {
+    "title": "Image to share",
+    "save": "Save image",
+    "share": "Share",
+    "error": "Could not generate the image.",
+    "previewAlt": "Image preview: days of conversation, messages and key dates, no names",
+    "days": "days of conversation",
+    "messages": "messages",
+    "conflict": "{count, plural, one {conflict episode} other {conflict episodes}}",
+    "turning": "the conversation changed"
+  },
+  "legal": {
+    "link": "Privacy and terms",
+    "title": "Privacy and terms",
+    "privacyTitle": "Privacy",
+    "termsTitle": "Terms",
+    "back": "Back to home",
+    "privacyItems": [
+      "The chat file is processed and discarded. It is not stored.",
+      "For the full report, the message text is sent to Google Gemini. It is sent without sender names and with emails, links and long numbers (phones, ID numbers, accounts) replaced by placeholders.",
+      "Google keeps what is sent for 55 days to detect abusive use. Authorized Google staff may review it for that purpose. It does not use it to train or improve its models.",
+      "The free preview sends nothing to Google.",
+      "Names written inside a message are not redacted.",
+      "We store the account email, the report (metrics, participant names and narrative) and the payment record.",
+      "A result without an account is deleted after one hour.",
+      "You can delete the report from your account.",
+      "Payment is processed by Lemon Squeezy. We never see or store card data."
+    ],
+    "contactLabel": "Contact:",
+    "contact": "[contact email]",
+    "termsItems": [
+      "The report is an automatic statistical reading of a chat. It is not a diagnosis or psychological or legal advice.",
+      "By uploading a chat you declare that you take part in that conversation.",
+      "One credit equals one full analysis and is spent when you upload the chat.",
+      "If the analysis fails, the credit is returned automatically."
+    ],
+    "refundsLabel": "Purchase refunds:",
+    "refunds": "[refund policy]"
+  },
+  "reports": {
+    "title": "My reports",
+    "link": "My reports",
+    "balance": "{count, plural, one {You have # credit} other {You have # credits}}",
+    "loading": "Loading your reports...",
+    "error": "Could not load your reports. Try again.",
+    "retry": "Retry",
+    "empty": "You have no reports yet.",
+    "upload": "Upload a chat",
+    "preview": "Preview",
+    "full": "Full",
+    "processing": "Processing",
+    "failed": "Failed",
+    "delete": "Delete",
+    "confirm": "Confirm delete",
+    "cancel": "Cancel",
+    "deleteThis": "Delete this report",
+    "deleted": "Report deleted.",
+    "deleteError": "Could not delete. Try again.",
+    "open": "Open"
+  },
+  "errors": {
+    "network": "Could not connect. Try again.",
+    "invalidCredentials": "Incorrect email or password.",
+    "emailTaken": "That email is already registered.",
+    "rateLimited": "Too many attempts. Wait a few minutes.",
+    "googleFailed": "Could not sign in with Google.",
+    "validation": {
+      "emailRequired": "Enter your email.",
+      "emailInvalid": "Enter a valid email.",
+      "passwordRequired": "Enter your password.",
+      "passwordShort": "The password must have at least 8 characters.",
+      "passwordMismatch": "The passwords do not match."
+    }
+  }
 }

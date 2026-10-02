@@ -46,15 +46,20 @@ function useTypewriter(text: string, active: boolean, onDone: () => void) {
 
 export function NarrativeCard({ narrative, onComplete }: NarrativeCardProps) {
   const t = useTranslations('narrative')
-  const isError = narrative.error === 'not_configured'
-
-  const fields = [
-    narrative.resumen,
-    narrative.dinamica,
-    narrative.punto_de_quiebre,
-    narrative.estado_actual,
-    narrative.reflexion,
-  ].filter((f): f is string => f !== null && f !== undefined)
+  
+  // Each chapter keeps its own label so a missing field (e.g. no breaking
+  // point) doesn't shift the labels of the chapters after it.
+  const chapters = (
+    [
+      ['label0', narrative.resumen],
+      ['label1', narrative.dinamica],
+      ['label2', narrative.punto_de_quiebre],
+      ['label3', narrative.estado_actual],
+      ['label4', narrative.reflexion],
+    ] as const
+  ).filter((c): c is readonly [typeof c[0], string] => c[1] !== null && c[1] !== undefined)
+  const fields = chapters.map(([, text]) => text)
+  const isError = narrative.error === 'not_configured' || fields.length === 0
 
   const [index, setIndex]         = useState(0)
   const [typingDone, setTypingDone] = useState(false)
@@ -144,7 +149,7 @@ export function NarrativeCard({ narrative, onComplete }: NarrativeCardProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <span className="text-xs uppercase tracking-widest text-[var(--text-muted)] font-mono">
-          {t(`label${index}` as 'label0' | 'label1' | 'label2' | 'label3' | 'label4')}
+          {t(chapters[index][0])}
         </span>
 
         <div className="flex items-center gap-4">

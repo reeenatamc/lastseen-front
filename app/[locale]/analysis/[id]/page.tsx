@@ -8,12 +8,20 @@ import { useAnalysis } from '@/hooks/useAnalysis'
 import { LoadingChapters } from '@/components/analysis/LoadingChapters'
 import { NarrativeCard } from '@/components/analysis/NarrativeCard'
 import {
+  OverviewCard,
   InitiativeCard,
   ResponseDecayCard,
+  ResponseTimeCard,
   SilenceOnsetCard,
   EmotionalDriftCard,
   DelayedRepliesCard,
+  ConflictCard,
 } from '@/components/analysis/MetricCard'
+import { ShareCard } from '@/components/analysis/ShareCard'
+import { InlineConfirm } from '@/components/ui/InlineConfirm'
+import { api } from '@/lib/api/client'
+import { analysisErrorKey } from '@/lib/analysis-errors'
+import { LockedReport } from '@/components/analysis/LockedReport'
 import { ChapterReveal } from '@/components/analysis/ChapterReveal'
 import { EmotionalTimeline } from '@/components/visualizations/EmotionalTimeline'
 import { SilenceMap } from '@/components/visualizations/SilenceMap'
@@ -31,9 +39,10 @@ type Chapter = 'loading' | 'narrative' | 'metrics' | 'charts'
 
 export default function AnalysisPage({ params }: PageProps) {
   const { id: idStr } = use(params)
-  const id = parseInt(idStr, 10)
+  const id = /^\d+$/.test(idStr) ? parseInt(idStr, 10) : NaN
   const router = useRouter()
   const t = useTranslations('analysis')
+  const tReports = useTranslations('reports')
 
   const [token, setToken] = useState<string | null>(null)
   const [tokenChecked, setTokenChecked] = useState(false)
@@ -61,15 +70,23 @@ export default function AnalysisPage({ params }: PageProps) {
 
   const { status, analysis, error } = useAnalysis(tokenChecked && token ? id : NaN, token)
 
+  // A preview has no narrative: go straight to the metrics instead of waiting for it
+  const isPreview = analysis?.access?.level === 'preview'
+
   // When analysis completes, move to narrative chapter
   useEffect(() => {
     if (status === 'completed' && analysis) {
-      setChapter('narrative')
+      if (isPreview) {
+        setShowMetrics(true)
+        setChapter('metrics')
+      } else {
+        setChapter('narrative')
+      }
     }
     if (status === 'failed') {
       setChapter('narrative') // will show error state
     }
-  }, [status, analysis])
+  }, [status, analysis, isPreview])
 
   const handleNarrativeComplete = () => {
     setTimeout(() => {
@@ -85,7 +102,8 @@ export default function AnalysisPage({ params }: PageProps) {
     }
   }, [showMetrics])
 
-  const hasError = status === 'failed' || (!!error && !analysis)
+  const invalidId = tokenChecked && !!token && isNaN(id)
+  const hasError = invalidId || status === 'failed' || (!!error && !analysis)
 
   // Show loading while waiting — but not if there's already an error
   if (!tokenChecked || (chapter === 'loading' && !hasError)) {
@@ -94,7 +112,7 @@ export default function AnalysisPage({ params }: PageProps) {
 
   // Unified error screen
   if (hasError) {
-    const message = error ?? t('failed')
+    const message = t(`errorCodes.${invalidId ? 'invalid_link' : analysisErrorKey(error ?? 'internal_error')}`)
     return (
       <div className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center max-w-sm">
@@ -119,9 +137,11 @@ export default function AnalysisPage({ params }: PageProps) {
     return <LoadingChapters />
   }
 
-  const { temporal, sentiment, narrative } = analysis.result
+  const { temporal, sentiment, narrative, conflict } = analysis.result
   const participants = temporal.overview.participants
-  const topGap = temporal.conversation_gaps.top_gaps[0]
+  const topGap = temporal.conversation_gaps?.top_gaps[0]
+  const access = analysis.access
+  const preview = access?.level === 'preview' ? access : null
 
   return (
     <div className="min-h-screen">
@@ -139,7 +159,13 @@ export default function AnalysisPage({ params }: PageProps) {
           {' / '}
           <span>{t('breadcrumb')} #{analysis.id}</span>
         </span>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-4 shrink-0">
+          <Link
+            href="/analyses"
+            className="text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors underline underline-offset-2"
+          >
+            {tReports('link')}
+          </Link>
           <ThemeToggle />
           <LangToggle />
         </div>
@@ -148,7 +174,7 @@ export default function AnalysisPage({ params }: PageProps) {
       <div className="max-w-3xl mx-auto px-4 md:px-6 pb-32">
         {/* Chapter 2 — Narrative */}
         <AnimatePresence>
-          {(chapter === 'narrative' || chapter === 'metrics' || chapter === 'charts') && (
+          {narrative && !preview && (chapter === 'narrative' || chapter === 'metrics' || chapter === 'charts') && (
             <motion.div
               key="narrative"
               variants={fadeIn}
@@ -182,27 +208,53 @@ export default function AnalysisPage({ params }: PageProps) {
                   transition={{ ...EASE_OUT, delay: 0 }}
                   className="h-full"
                 >
-                  <InitiativeCard
-                    share={temporal.initiative_balance.share}
-                    participants={participants}
-                    abandonedOpen={temporal.initiative_balance.abandoned_open}
-                    doubleText={temporal.initiative_balance.double_text}
-                  />
+                  <OverviewCard overview={temporal.overview} activity={temporal.activity_patterns} />
                 </motion.div>
 
-                <motion.div
-                  variants={fadeUp}
-                  initial="hidden"
-                  animate="visible"
-                  transition={{ ...EASE_OUT, delay: 0.12 }}
-                >
-                  <ResponseDecayCard
-                    decayScore={temporal.response_decay.decay_score}
-                    trend={temporal.response_decay.trend}
-                    turningPoint={temporal.response_decay.turning_point}
-                    responseTimes={temporal.response_time.per_person}
-                  />
-                </motion.div>
+                {temporal.initiative_balance && (
+                  <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ ...EASE_OUT, delay: 0 }}
+                    className="h-full"
+                  >
+                    <InitiativeCard
+                      share={temporal.initiative_balance.share}
+                      participants={participants}
+                      abandonedOpen={temporal.initiative_balance.abandoned_open}
+                      doubleText={temporal.initiative_balance.double_text}
+                    />
+                  </motion.div>
+                )}
+
+                {temporal.response_decay ? (
+                  <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ ...EASE_OUT, delay: 0.12 }}
+                  >
+                    <ResponseDecayCard
+                      decayScore={temporal.response_decay.decay_score}
+                      trend={temporal.response_decay.trend}
+                      turningPoint={temporal.response_decay.turning_point}
+                      responseTimes={temporal.response_time.per_person}
+                      closingPhase={temporal.response_decay.closing_phase}
+                    />
+                  </motion.div>
+                ) : (
+                  temporal.response_time?.per_person && (
+                    <motion.div
+                      variants={fadeUp}
+                      initial="hidden"
+                      animate="visible"
+                      transition={{ ...EASE_OUT, delay: 0.12 }}
+                    >
+                      <ResponseTimeCard responseTimes={temporal.response_time.per_person} />
+                    </motion.div>
+                  )
+                )}
 
                 {topGap && (
                   <motion.div
@@ -215,20 +267,23 @@ export default function AnalysisPage({ params }: PageProps) {
                   </motion.div>
                 )}
 
-                <motion.div
-                  variants={fadeUp}
-                  initial="hidden"
-                  animate="visible"
-                  transition={{ ...EASE_OUT, delay: 0.36 }}
-                  className="h-full"
-                >
-                  <EmotionalDriftCard
-                    score={sentiment.emotional_drift?.score ?? 0}
-                    direction={sentiment.emotional_drift?.direction ?? ''}
-                    hasError={!!sentiment.error}
-                    sentimentPerPerson={!sentiment.error ? sentiment.per_person : undefined}
-                  />
-                </motion.div>
+                {sentiment && (
+                  <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ ...EASE_OUT, delay: 0.36 }}
+                    className="h-full"
+                  >
+                    <EmotionalDriftCard
+                      score={sentiment.emotional_drift?.score ?? 0}
+                      direction={sentiment.emotional_drift?.direction ?? ''}
+                      hasError={!!sentiment.error}
+                      sentimentPerPerson={!sentiment.error ? sentiment.per_person : undefined}
+                      recent={!sentiment.error ? sentiment.recent : undefined}
+                    />
+                  </motion.div>
+                )}
 
                 {temporal.delayed_replies && (
                   <motion.div
@@ -245,7 +300,24 @@ export default function AnalysisPage({ params }: PageProps) {
                     />
                   </motion.div>
                 )}
+
+                {conflict && !('error' in conflict) && (
+                  <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ ...EASE_OUT, delay: 0.6 }}
+                    className="h-full sm:col-span-2"
+                  >
+                    <ConflictCard conflict={conflict} />
+                  </motion.div>
+                )}
               </div>
+              {!preview && (
+                <div className="mt-4">
+                  <ShareCard result={analysis.result} />
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -261,7 +333,7 @@ export default function AnalysisPage({ params }: PageProps) {
               className="flex flex-col gap-16"
             >
               {/* Emotional Timeline */}
-              {!sentiment.error && sentiment.evolution?.length > 0 && (
+              {sentiment && !sentiment.error && sentiment.evolution?.length > 0 && (
                 <ChapterReveal scrollTriggered>
                   <div className="border border-[var(--border)] bg-[var(--surface)] p-4 md:p-8">
                     <EmotionalTimeline
@@ -290,6 +362,15 @@ export default function AnalysisPage({ params }: PageProps) {
                 </ChapterReveal>
               )}
 
+              {preview && (
+                <ChapterReveal scrollTriggered>
+                  <LockedReport
+                    access={preview}
+                    token={token}
+                  />
+                </ChapterReveal>
+              )}
+
               {/* Footer */}
               <ChapterReveal scrollTriggered>
                 <div className="flex flex-col items-center gap-8 pt-8">
@@ -302,6 +383,15 @@ export default function AnalysisPage({ params }: PageProps) {
                   >
                     {t('analyzeAnother')}
                   </Link>
+                  {token && (
+                    <InlineConfirm
+                      label={tReports('deleteThis')}
+                      onConfirm={async () => {
+                        await api.deleteAnalysis(analysis.id, token)
+                        router.push('/analyses')
+                      }}
+                    />
+                  )}
                 </div>
               </ChapterReveal>
             </motion.div>

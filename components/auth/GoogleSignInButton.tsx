@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { isAuthErrorCode, type AuthErrorCode } from '@/lib/auth-errors'
 
 declare global {
   interface Window {
@@ -22,7 +23,7 @@ const GSI_SCRIPT_SRC = 'https://accounts.google.com/gsi/client'
 
 interface Props {
   onSuccess: () => void
-  onError: (msg: string) => void
+  onError: (code: AuthErrorCode) => void
 }
 
 export function GoogleSignInButton({ onSuccess, onError }: Props) {
@@ -41,12 +42,12 @@ export function GoogleSignInButton({ onSuccess, onError }: Props) {
         })
         const data = await res.json()
         if (!res.ok) {
-          onError(typeof data.error === 'string' ? data.error : 'Google sign-in failed')
+          onError(isAuthErrorCode(data.code) ? data.code : 'network')
           return
         }
         onSuccess()
       } catch {
-        onError('Connection error during Google sign-in')
+        onError('network')
       }
     }
 

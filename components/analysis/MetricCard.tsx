@@ -1,16 +1,26 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
+import type { ActivityPatterns, TemporalOverview, ClosingPhase, ChargedTone, ConflictData, RecentSentiment } from '@/lib/api/types'
 import { formatDate } from '@/lib/utils'
 import { fadeUp } from '@/lib/motion'
 
 function formatPeriod(period: string, months: string[]): string {
   const quarterly = period.match(/^(\d{4})-Q(\d)$/)
   if (quarterly) return `Q${quarterly[2]} ${quarterly[1]}`
+  const daily = period.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  if (daily) return `${parseInt(daily[3], 10)} ${months[parseInt(daily[2], 10) - 1]} ${daily[1]}`
   const monthly = period.match(/^(\d{4})-(\d{2})$/)
   if (monthly) return `${months[parseInt(monthly[2], 10) - 1]} ${monthly[1]}`
   return period
+}
+
+// "2026-09-14" or full ISO timestamp -> "14 Sep"
+function formatShortDay(iso: string, months: string[]): string {
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/)
+  if (!m) return iso
+  return `${parseInt(m[3], 10)} ${months[parseInt(m[2], 10) - 1]}`
 }
 
 interface BarProps {
@@ -102,6 +112,7 @@ interface ResponseDecayCardProps {
   trend: 'deteriorating' | 'stable' | 'improving'
   turningPoint: string | null
   responseTimes?: Record<string, { mean_seconds: number }>
+  closingPhase?: ClosingPhase | null
 }
 
 function formatSeconds(s: number): string {
@@ -111,7 +122,46 @@ function formatSeconds(s: number): string {
   return `${(s / 86400).toFixed(1)}d`
 }
 
-export function ResponseDecayCard({ decayScore, trend, turningPoint, responseTimes }: ResponseDecayCardProps) {
+function ResponseTimeBlock({
+  responseTimes,
+  showLabel = true,
+}: {
+  responseTimes: Record<string, { mean_seconds: number }>
+  showLabel?: boolean
+}) {
+  const t = useTranslations('metrics')
+  return (
+    <div className="flex flex-col gap-2">
+      {showLabel && (
+        <span className="text-[10px] font-mono text-[var(--text-muted)] tracking-widest uppercase">
+          {t('avgResponseTime')}
+        </span>
+      )}
+      {Object.entries(responseTimes).map(([p, rt]) => (
+        <div key={p} className="flex justify-between items-center">
+          <span className="text-xs font-mono text-[var(--text-muted)] truncate max-w-[70%]">{p}</span>
+          <span className="text-xs font-mono" style={{ color: 'var(--text-primary)' }}>
+            {formatSeconds(rt.mean_seconds)}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Average response time per person (shown on its own when the decay card is not available)
+export function ResponseTimeCard({ responseTimes }: { responseTimes: Record<string, { mean_seconds: number }> }) {
+  const t = useTranslations('metrics')
+  return (
+    <MetricCardWrapper title={t('avgResponseTime')}>
+      <div className="mt-4">
+        <ResponseTimeBlock responseTimes={responseTimes} showLabel={false} />
+      </div>
+    </MetricCardWrapper>
+  )
+}
+
+export function ResponseDecayCard({ decayScore, trend, turningPoint, responseTimes, closingPhase }: ResponseDecayCardProps) {
   const t = useTranslations('metrics')
   const months = useTranslations('months')
   const monthNames = Array.from({ length: 12 }, (_, i) => months(`${i}` as any))
@@ -135,22 +185,35 @@ export function ResponseDecayCard({ decayScore, trend, turningPoint, responseTim
             <span style={{ color: 'var(--warm)' }}>{formatPeriod(turningPoint, monthNames)}</span>
           </span>
         )}
-        {responseTimes && Object.keys(responseTimes).length > 0 && (
+        {closingPhase?.detected && (
           <>
             <div className="h-px bg-[var(--border)]" />
             <div className="flex flex-col gap-2">
               <span className="text-[10px] font-mono text-[var(--text-muted)] tracking-widest uppercase">
-                {t('avgResponseTime')}
+                {t('closingPhase')}
               </span>
-              {Object.entries(responseTimes).map(([p, rt]) => (
-                <div key={p} className="flex justify-between items-center">
-                  <span className="text-xs font-mono text-[var(--text-muted)] truncate max-w-[70%]">{p}</span>
-                  <span className="text-xs font-mono" style={{ color: 'var(--text-primary)' }}>
-                    {formatSeconds(rt.mean_seconds)}
-                  </span>
-                </div>
-              ))}
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-mono text-[var(--text-muted)]">{t('messagesPerDay')}</span>
+                <span className="text-xs font-mono" style={{ color: 'var(--text-primary)' }}>
+                  {t('ofUsual', { pct: Math.round(closingPhase.volume_ratio * 100) })}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-mono text-[var(--text-muted)]">{t('longestSilence')}</span>
+                <span className="text-xs font-mono" style={{ color: 'var(--text-primary)' }}>
+                  {t('before', {
+                    days: closingPhase.max_silence_days.toFixed(1),
+                    baseline: closingPhase.baseline_max_silence_days.toFixed(1),
+                  })}
+                </span>
+              </div>
             </div>
+          </>
+        )}
+        {responseTimes && Object.keys(responseTimes).length > 0 && (
+          <>
+            <div className="h-px bg-[var(--border)]" />
+            <ResponseTimeBlock responseTimes={responseTimes} />
           </>
         )}
       </div>
@@ -216,6 +279,7 @@ interface SentimentPerson {
   positive: number
   negative: number
   neutral: number
+  charged?: ChargedTone
 }
 
 interface EmotionalDriftCardProps {
@@ -223,6 +287,7 @@ interface EmotionalDriftCardProps {
   direction: string
   hasError: boolean
   sentimentPerPerson?: Record<string, SentimentPerson>
+  recent?: RecentSentiment | null
 }
 
 function humanizeDirection(direction: string): string {
@@ -234,7 +299,7 @@ function humanizeDirection(direction: string): string {
     .replace(/_/g, ' · ')
 }
 
-export function EmotionalDriftCard({ score, direction, hasError, sentimentPerPerson }: EmotionalDriftCardProps) {
+export function EmotionalDriftCard({ score, direction, hasError, sentimentPerPerson, recent }: EmotionalDriftCardProps) {
   const t = useTranslations('metrics')
 
   const TONE_LABEL: Record<string, string> = {
@@ -262,6 +327,9 @@ export function EmotionalDriftCard({ score, direction, hasError, sentimentPerPer
                 <span className="text-[10px] font-mono text-[var(--text-muted)] tracking-widest uppercase">
                   {t('tonePerPerson')}
                 </span>
+                {Object.values(sentimentPerPerson).some(s => s.charged) && (
+                  <span className="text-[10px] font-mono text-[var(--text-muted)]">{t('toneChargedNote')}</span>
+                )}
                 {Object.entries(sentimentPerPerson).map(([p, s]) => (
                   <div key={p} className="flex justify-between items-center">
                     <span className="text-xs font-mono text-[var(--text-muted)] truncate max-w-[70%]">{p}</span>
@@ -269,15 +337,99 @@ export function EmotionalDriftCard({ score, direction, hasError, sentimentPerPer
                       className="text-xs font-mono"
                       style={{ color: s.dominant === 'positive' ? 'var(--warm)' : 'var(--text-muted)' }}
                     >
-                      {TONE_LABEL[s.dominant] ?? s.dominant}
+                      {s.charged && s.charged.positive != null
+                        ? t('toneSplit', {
+                            pos: Math.round(s.charged.positive * 100),
+                            neg: Math.round((s.charged.negative ?? 1 - s.charged.positive) * 100),
+                          })
+                        : TONE_LABEL[s.dominant] ?? s.dominant}
                     </span>
                   </div>
                 ))}
               </div>
             </>
           )}
+          {(recent?.shift === 'more_negative' || recent?.shift === 'more_positive') && (
+            <span
+              className="text-xs font-mono"
+              style={{ color: recent.shift === 'more_negative' ? 'var(--warm)' : 'var(--text-muted)' }}
+            >
+              {recent.shift === 'more_negative'
+                ? t('toneMoreNegative', { days: recent.window_days })
+                : t('toneMorePositive', { days: recent.window_days })}
+            </span>
+          )}
         </div>
       )}
+    </MetricCardWrapper>
+  )
+}
+
+// Conflict card
+export function ConflictCard({ conflict }: { conflict?: ConflictData | { error: string } | null }) {
+  const t = useTranslations('metrics')
+  const months = useTranslations('months')
+  const monthNames = Array.from({ length: 12 }, (_, i) => months(`${i}` as any))
+
+  if (!conflict || 'error' in conflict && conflict.error) return null
+  const data = conflict as ConflictData
+  const episodes = [...(data.episodes ?? [])].sort((a, b) => a.start.localeCompare(b.start))
+  const ratio = data.recent?.ratio
+
+  return (
+    <MetricCardWrapper title={t('conflictEpisodes')}>
+      <div className="flex flex-col gap-3 mt-4">
+        <span
+          className="text-3xl"
+          style={{
+            fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif',
+            color: 'var(--warm)',
+          }}
+        >
+          {episodes.length}
+          <span className="text-base ml-1 font-mono" style={{ color: 'var(--text-muted)' }}>
+            {t('episodes', { count: episodes.length })}
+          </span>
+        </span>
+        {data.recent && ratio != null && ratio >= 1.5 && (
+          <span className="text-xs font-mono" style={{ color: 'var(--warm)' }}>
+            {t('conflictRecent', { weeks: data.recent.window_weeks, ratio: ratio.toFixed(1) })}
+          </span>
+        )}
+        <div className="h-px bg-[var(--border)]" />
+        {episodes.length === 0 ? (
+          <span className="text-xs font-mono text-[var(--text-muted)]">{t('noConflict')}</span>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {episodes.map(ep => {
+              const startDay = ep.start.slice(0, 10)
+              const endDay = ep.end.slice(0, 10)
+              const date =
+                endDay > startDay
+                  ? `${formatShortDay(startDay, monthNames)} - ${formatShortDay(endDay, monthNames)}`
+                  : formatShortDay(startDay, monthNames)
+              const extras = [
+                t('mentions', { count: ep.mentions }),
+                ep.blocked ? t('blocked') : null,
+                ep.missed_calls >= 8 ? t('missedCalls', { count: ep.missed_calls }) : null,
+              ].filter(Boolean)
+              return (
+                <div key={`${ep.start}-${ep.end}`} className="flex justify-between items-center gap-3">
+                  <span
+                    className="text-xs font-mono shrink-0"
+                    style={{ color: ep.severity === 'high' ? 'var(--warm)' : 'var(--text-muted)' }}
+                  >
+                    {date}
+                  </span>
+                  <span className="text-xs font-mono text-right" style={{ color: 'var(--text-primary)' }}>
+                    {extras.join(' · ')}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
     </MetricCardWrapper>
   )
 }
@@ -331,6 +483,90 @@ export function DelayedRepliesCard({ perPerson, total, participants }: DelayedRe
   )
 }
 
+
+// Overview card: totals, period, share per person, busiest hour and weekday
+function peakKey(counts: Record<string, number> | undefined): string | null {
+  if (!counts) return null
+  let best: string | null = null
+  for (const [k, v] of Object.entries(counts)) {
+    if (v > 0 && (best === null || v > counts[best])) best = k
+  }
+  return best
+}
+
+export function OverviewCard({ overview, activity }: { overview: TemporalOverview; activity?: ActivityPatterns }) {
+  const t = useTranslations('metrics')
+  const locale = useLocale()
+  const fmtDate = (iso: string) =>
+    new Date(iso).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })
+
+  const hour = peakKey(activity?.by_hour)
+  // Weekday keys follow the backend: 0 = Monday. 2024-01-01 was a Monday.
+  const weekday = peakKey(activity?.by_weekday)
+  const weekdayName =
+    weekday !== null
+      ? new Date(2024, 0, 1 + Number(weekday)).toLocaleDateString(locale, { weekday: 'long' })
+      : null
+
+  const rows: Array<[string, string]> = []
+  if (hour !== null) rows.push([t('overview.busiestHour'), `${hour.padStart(2, '0')}:00`])
+  if (weekdayName) rows.push([t('overview.busiestDay'), weekdayName])
+
+  return (
+    <MetricCardWrapper title={t('overview.title')}>
+      <div className="flex flex-col gap-4 mt-4">
+        <div className="flex justify-between items-center">
+          <span className="text-xs font-mono text-[var(--text-muted)]">{t('overview.totalMessages')}</span>
+          <span className="text-xs font-mono" style={{ color: 'var(--warm)' }}>
+            {new Intl.NumberFormat(locale).format(overview.total_messages)}
+          </span>
+        </div>
+        {overview.date_range && (
+          <div className="flex justify-between items-center gap-4">
+            <span className="text-xs font-mono text-[var(--text-muted)]">{t('overview.period')}</span>
+            <span className="text-xs font-mono text-right" style={{ color: 'var(--text-primary)' }}>
+              {t('overview.range', {
+                start: fmtDate(overview.date_range.start),
+                end: fmtDate(overview.date_range.end),
+              })}
+            </span>
+          </div>
+        )}
+        <div className="h-px bg-[var(--border)]" />
+        <div className="flex flex-col gap-2">
+          <span className="text-[10px] font-mono text-[var(--text-muted)] tracking-widest uppercase">
+            {t('overview.perPerson')}
+          </span>
+          {overview.participants.map(p => {
+            const count = overview.messages_per_person[p] ?? 0
+            const pct = overview.total_messages > 0 ? Math.round((count / overview.total_messages) * 100) : 0
+            return (
+              <div key={p} className="flex justify-between items-center">
+                <span className="text-xs font-mono text-[var(--text-muted)] truncate max-w-[60%]">{p}</span>
+                <span className="text-xs font-mono" style={{ color: 'var(--text-primary)' }}>
+                  {new Intl.NumberFormat(locale).format(count)} · {pct} %
+                </span>
+              </div>
+            )
+          })}
+        </div>
+        {rows.length > 0 && (
+          <>
+            <div className="h-px bg-[var(--border)]" />
+            <div className="flex flex-col gap-2">
+              {rows.map(([label, value]) => (
+                <div key={label} className="flex justify-between items-center">
+                  <span className="text-xs font-mono text-[var(--text-muted)]">{label}</span>
+                  <span className="text-xs font-mono" style={{ color: 'var(--text-primary)' }}>{value}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </MetricCardWrapper>
+  )
+}
 
 // Wrapper
 interface MetricCardWrapperProps {

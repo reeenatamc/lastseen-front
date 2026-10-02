@@ -4,6 +4,8 @@ import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 
+export const MAX_UPLOAD_BYTES = 20 * 1024 * 1024
+
 interface DropZoneProps {
   onFileSelect: (file: File) => void
   selectedFile: File | null
@@ -19,13 +21,17 @@ export function DropZone({ onFileSelect, selectedFile, error }: DropZoneProps) {
   const validateAndSelect = useCallback(
     (file: File) => {
       if (!file.name.endsWith('.txt')) {
-        setDragError('Only .txt files are accepted.')
+        setDragError(t('onlyTxt'))
+        return
+      }
+      if (file.size > MAX_UPLOAD_BYTES) {
+        setDragError(t('tooLarge'))
         return
       }
       setDragError(null)
       onFileSelect(file)
     },
-    [onFileSelect]
+    [onFileSelect, t]
   )
 
   const handleDrop = useCallback(

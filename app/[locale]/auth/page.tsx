@@ -9,10 +9,18 @@ import { Button } from '@/components/ui/Button'
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { Link } from '@/i18n/navigation'
-import { api } from '@/lib/api/client'
+import { api, ApiError } from '@/lib/api/client'
+import { authErrorFromStatus, isAuthErrorCode, type AuthErrorCode } from '@/lib/auth-errors'
 import { validate } from '@/lib/utils'
 
 type Mode = 'signin' | 'register'
+
+const CODE_KEYS = {
+  invalid_credentials: 'invalidCredentials',
+  email_taken: 'emailTaken',
+  rate_limited: 'rateLimited',
+  network: 'network',
+} as const
 
 interface FormState {
   email: string
@@ -30,6 +38,7 @@ interface FormErrors {
 export default function AuthPage() {
   const router = useRouter()
   const t = useTranslations('auth')
+  const tErr = useTranslations('errors')
   const [mode, setMode] = useState<Mode>('signin')
   const [form, setForm] = useState<FormState>({ email: '', password: '', confirmPassword: '' })
   const [errors, setErrors] = useState<FormErrors>({})
@@ -46,10 +55,16 @@ export default function AuthPage() {
     setForm({ email: '', password: '', confirmPassword: '' })
   }
 
+  const authMessage = (code: AuthErrorCode, google = false): string =>
+    code === 'invalid_credentials' && google ? tErr('googleFailed') : tErr(CODE_KEYS[code])
+
   const runValidation = (): boolean => {
     const fields: Record<string, string> = { email: form.email, password: form.password }
     if (mode === 'register') fields.confirmPassword = form.confirmPassword
-    const { errors: fieldErrors } = validate(fields)
+    const { errors: fieldKeys } = validate(fields)
+    const fieldErrors = Object.fromEntries(
+      Object.entries(fieldKeys).map(([k, key]) => [k, tErr(`validation.${key}` as 'validation.emailRequired')]),
+    )
     setErrors(fieldErrors)
     return Object.keys(fieldErrors).length === 0
   }
@@ -66,8 +81,9 @@ export default function AuthPage() {
         await api.register(form.email, form.password)
       }
       await loginAndRedirect()
-    } catch {
-      setErrors({ general: 'Connection error. Please try again.' })
+    } catch (err) {
+      const code = err instanceof ApiError ? authErrorFromStatus(err.status) : 'network'
+      setErrors({ general: authMessage(code) })
       setLoading(false)
     }
   }
@@ -82,8 +98,7 @@ export default function AuthPage() {
     const data = await res.json()
 
     if (!res.ok) {
-      const detail = data.error ?? 'Incorrect credentials.'
-      setErrors({ general: typeof detail === 'string' ? detail : 'Login failed.' })
+      setErrors({ general: authMessage(isAuthErrorCode(data.code) ? data.code : 'network') })
       setLoading(false)
     } else {
       router.push('/upload')
@@ -127,7 +142,7 @@ export default function AuthPage() {
         <div className="mb-6">
           <GoogleSignInButton
             onSuccess={() => router.push('/upload')}
-            onError={(msg) => setErrors({ general: msg })}
+            onError={(code) => setErrors({ general: authMessage(code, true) })}
           />
           {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID && (
             <div className="mt-6 flex items-center gap-3 text-xs font-mono text-[var(--text-muted)]">

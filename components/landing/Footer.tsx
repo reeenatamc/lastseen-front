@@ -1,9 +1,11 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 
 export function Footer() {
   const t = useTranslations('landing')
+  const tLegal = useTranslations('legal')
 
   return (
     <footer className="border-t border-[var(--border)] px-6 py-5">
@@ -15,6 +17,12 @@ export function Footer() {
           <span className="text-[11px] font-mono text-[var(--text-muted)]">
             {t('footerRight')}
           </span>
+          <Link
+            href="/legal"
+            className="text-[11px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-200"
+          >
+            {tLegal('link')}
+          </Link>
           <a
             href="https://github.com/reeenatamc"
             target="_blank"
