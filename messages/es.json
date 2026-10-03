@@ -44,7 +44,19 @@
     "coming3title": "Telegram e iMessage.",
     "coming3desc": "Los parsers ya están construidos. El soporte completo llega en v2.",
     "ctaBottom": "Analiza una conversación",
-    "closing": "Algunas conversaciones terminan antes del último mensaje."
+    "closing": "Algunas conversaciones terminan antes del último mensaje.",
+    "example": {
+      "label": "Ejemplo de resultado",
+      "interpretation": "Interpretación de LASTSEEN",
+      "initiative": "Balance de iniciativa",
+      "decay": "Deterioro de respuesta",
+      "tone": "Tono por persona",
+      "worsening": "empeorando con el tiempo",
+      "warm": "cálido",
+      "distant": "distante",
+      "narrative": "La conversación empezó con reciprocidad clara. Ambos iniciaban, ambos respondían. En el tercer mes algo cambió: los tiempos de respuesta empezaron a crecer y el peso de mantener el hilo cayó sobre uno solo.",
+      "disclaimer": "Ejemplo anonimizado, no es una conversación real"
+    }
   },
   "auth": {
     "signin": "Iniciar sesión",
@@ -84,7 +96,8 @@
     "uploadFailed": "No se pudo subir el archivo. Intenta de nuevo.",
     "connectionError": "No se pudo conectar. Intenta de nuevo.",
     "onlyTxt": "Solo se aceptan archivos .txt.",
-    "tooLarge": "El archivo supera 20 MB."
+    "tooLarge": "El archivo supera 20 MB.",
+    "fileSize": "{size}. Toca para cambiar el archivo."
   },
   "analysis": {
     "breadcrumb": "análisis",
@@ -180,7 +193,8 @@
     "silenceMap": "Mapa de silencios",
     "frequencyChart": "Frecuencia de mensajes",
     "silenceLegend": "silencio",
-    "activeLegend": "activo"
+    "activeLegend": "activo",
+    "tooltipMessages": "{count, plural, one {# mensaje} other {# mensajes}}"
   },
   "months": [
     "Ene",
@@ -314,6 +328,66 @@
       "passwordRequired": "Escribe tu contraseña.",
       "passwordShort": "La contraseña debe tener al menos 8 caracteres.",
       "passwordMismatch": "Las contraseñas no coinciden."
+    }
+  },
+  "story": {
+    "progress": "Progreso del reporte",
+    "counter": "{current} / {total}",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "percent": "{value} %",
+    "unit": {
+      "s": "s",
+      "min": "min",
+      "h": "h",
+      "d": "d"
+    },
+    "dateRange": "{start} a {end}",
+    "summary": {
+      "phrase": "{count, plural, one {mensaje} other {mensajes}} en {days, plural, one {# día} other {# días}}",
+      "hour": "Hora más activa: {value}",
+      "day": "Día más activo: {value}"
+    },
+    "initiative": {
+      "phrase": "de las conversaciones las abrió {name}",
+      "low": "{count, plural, one {conversación abierta} other {conversaciones abiertas}}. Son pocas para saber quién escribe primero: toma este dato como orientativo.",
+      "left": "Abrió y se fue: {list}",
+      "followed": "Siguió sin respuesta: {list}"
+    },
+    "rhythm": {
+      "phrase": "es el tiempo de respuesta promedio de {name}",
+      "trend": "Tendencia: {value}",
+      "delayed": "Respuestas de más de {hours} h: {list}"
+    },
+    "turning": {
+      "phrase": "La conversación cambió en esta fecha.",
+      "byResponse": "Detectado por el cambio en los tiempos de respuesta.",
+      "byTone": "Detectado por el cambio de tono."
+    },
+    "closing": {
+      "phrase": "del volumen habitual de mensajes por día desde el {date}",
+      "silence": "Silencio más largo: {days} días, antes {baseline}"
+    },
+    "tone": {
+      "phrase": "Tono de los mensajes con carga emocional.",
+      "aligned": "Tonos alineados.",
+      "tense": "tenso",
+      "apart": "Tonos distintos."
+    },
+    "conflict": {
+      "phrase": "{count, plural, one {episodio} other {episodios}} de conflicto",
+      "none": "episodios de conflicto detectados",
+      "more": "y {count} más"
+    },
+    "activity": {
+      "phrase": "es la hora en que más escriben",
+      "days": "días de conversación",
+      "silenceDays": "Silencio más largo: {count, plural, one {# día} other {# días}}, desde el {date}",
+      "silenceHours": "Silencio más largo: {count, plural, one {# hora} other {# horas}}, desde el {date}"
+    },
+    "share": {
+      "another": "Analizar otra conversación",
+      "createAccount": "Crear cuenta"
     }
   }
 }

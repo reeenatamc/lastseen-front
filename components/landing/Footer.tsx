@@ -9,11 +9,11 @@ export function Footer() {
 
   return (
     <footer className="border-t border-[var(--border)] px-6 py-5">
-      <div className="max-w-[560px] mx-auto flex items-center justify-between">
+      <div className="max-w-[560px] mx-auto flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <span className="text-[11px] font-mono text-[var(--text-muted)]">
           LASTSEEN
         </span>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
           <span className="text-[11px] font-mono text-[var(--text-muted)]">
             {t('footerRight')}
           </span>

@@ -1,4 +1,5 @@
 import type { AnalysisResult } from '@/lib/api/types'
+import { formatPeriod } from '@/lib/format'
 
 export const SHARE_CARD_WIDTH = 1080
 export const SHARE_CARD_HEIGHT = 1920
@@ -26,23 +27,6 @@ export interface ShareCardData {
 }
 
 type FullResult = NonNullable<AnalysisResult['result']>
-
-// "2026-09-14", "2026-09" or "2026-Q3" -> readable text in the given locale
-function formatPeriod(period: string, locale: string): string {
-  const daily = period.match(/^(\d{4})-(\d{2})-(\d{2})/)
-  if (daily) {
-    const d = new Date(Number(daily[1]), Number(daily[2]) - 1, Number(daily[3]))
-    return d.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })
-  }
-  const monthly = period.match(/^(\d{4})-(\d{2})$/)
-  if (monthly) {
-    const d = new Date(Number(monthly[1]), Number(monthly[2]) - 1, 1)
-    return d.toLocaleDateString(locale, { month: 'long', year: 'numeric' })
-  }
-  const quarterly = period.match(/^(\d{4})-Q(\d)$/)
-  if (quarterly) return `Q${quarterly[2]} ${quarterly[1]}`
-  return period
-}
 
 /** Pure: builds the card content from a full result. Contains no names or message text. */
 export function buildShareCardData(

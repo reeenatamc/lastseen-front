@@ -44,7 +44,19 @@
     "coming3title": "Telegram and iMessage.",
     "coming3desc": "Parsers already built. Full pipeline support coming in v2.",
     "ctaBottom": "Analyze a conversation",
-    "closing": "Some conversations end before the last message."
+    "closing": "Some conversations end before the last message.",
+    "example": {
+      "label": "Example output",
+      "interpretation": "LASTSEEN interpretation",
+      "initiative": "Initiative balance",
+      "decay": "Response decay",
+      "tone": "Tone per person",
+      "worsening": "worsening over time",
+      "warm": "warm",
+      "distant": "distant",
+      "narrative": "The conversation started with clear reciprocity. Both started topics, both replied. In the third month something changed: response times began to grow and the weight of keeping the thread going fell on one person.",
+      "disclaimer": "Anonymized example, not a real conversation"
+    }
   },
   "auth": {
     "signin": "Sign in",
@@ -84,7 +96,8 @@
     "uploadFailed": "Could not upload the file. Try again.",
     "connectionError": "Could not connect. Try again.",
     "onlyTxt": "Only .txt files are accepted.",
-    "tooLarge": "The file exceeds 20 MB."
+    "tooLarge": "The file exceeds 20 MB.",
+    "fileSize": "{size}. Click to change the file."
   },
   "analysis": {
     "breadcrumb": "analysis",
@@ -180,7 +193,8 @@
     "silenceMap": "Silence map",
     "frequencyChart": "Message frequency",
     "silenceLegend": "silence",
-    "activeLegend": "active"
+    "activeLegend": "active",
+    "tooltipMessages": "{count, plural, one {# message} other {# messages}}"
   },
   "months": [
     "Jan",
@@ -314,6 +328,66 @@
       "passwordRequired": "Enter your password.",
       "passwordShort": "The password must have at least 8 characters.",
       "passwordMismatch": "The passwords do not match."
+    }
+  },
+  "story": {
+    "progress": "Report progress",
+    "counter": "{current} / {total}",
+    "back": "Back",
+    "next": "Next",
+    "percent": "{value}%",
+    "unit": {
+      "s": "s",
+      "min": "min",
+      "h": "h",
+      "d": "d"
+    },
+    "dateRange": "{start} to {end}",
+    "summary": {
+      "phrase": "{count, plural, one {message} other {messages}} in {days, plural, one {# day} other {# days}}",
+      "hour": "Busiest hour: {value}",
+      "day": "Busiest day: {value}"
+    },
+    "initiative": {
+      "phrase": "of the conversations were opened by {name}",
+      "low": "{count, plural, one {conversation opened} other {conversations opened}}. That is too few to tell who writes first: treat this as a rough guide.",
+      "left": "Opened and left: {list}",
+      "followed": "Followed up unanswered: {list}"
+    },
+    "rhythm": {
+      "phrase": "is the average response time of {name}",
+      "trend": "Trend: {value}",
+      "delayed": "Replies over {hours} h: {list}"
+    },
+    "turning": {
+      "phrase": "The conversation changed on this date.",
+      "byResponse": "Detected from the change in response times.",
+      "byTone": "Detected from the change in tone."
+    },
+    "closing": {
+      "phrase": "of the usual daily message volume since {date}",
+      "silence": "Longest silence: {days} days, before {baseline}"
+    },
+    "tone": {
+      "phrase": "Tone of the emotionally charged messages.",
+      "aligned": "Tones aligned.",
+      "tense": "tense",
+      "apart": "Different tones."
+    },
+    "conflict": {
+      "phrase": "{count, plural, one {conflict episode} other {conflict episodes}}",
+      "none": "conflict episodes detected",
+      "more": "and {count} more"
+    },
+    "activity": {
+      "phrase": "is the hour you write the most",
+      "days": "days of conversation",
+      "silenceDays": "Longest silence: {count, plural, one {# day} other {# days}}, from {date}",
+      "silenceHours": "Longest silence: {count, plural, one {# hour} other {# hours}}, from {date}"
+    },
+    "share": {
+      "another": "Analyze another conversation",
+      "createAccount": "Create account"
     }
   }
 }

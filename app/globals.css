@@ -6,6 +6,7 @@
   --border: #1f1f1f;
   --text-primary: #f0f0f0;
   --text-muted: #555555;
+  --text-detail: #a8a8a8;
   --accent: #f0f0f0;
   --destructive: #ff4444;
   --warm: #c8a96e;
@@ -18,6 +19,7 @@
   --border: #e3e3e0;
   --text-primary: #0a0a0a;
   --text-muted: #767676;
+  --text-detail: #595959;
   --accent: #0a0a0a;
   --destructive: #cc2222;
   --warm: #9a7b3e;
@@ -91,3 +93,31 @@ body::before {
   font-family: var(--font-instrument-serif), 'Instrument Serif', serif;
   font-style: italic;
 }
+
+/* Report story typography */
+.story-datum-short { font-size: clamp(5.5rem, 24vw, 12rem); line-height: 0.9; }
+.story-datum-long { font-size: clamp(2.75rem, 10vw, 6rem); line-height: 1; }
+.story-phrase { font-size: clamp(1.5rem, 2.4vw, 2.25rem); line-height: 1.25; }
+.story-person { font-size: clamp(1.75rem, 3vw, 2.75rem); line-height: 1.2; }
+.story-detail { font-size: 0.875rem; line-height: 1.7; color: var(--text-detail); }
+.story-narrative { font-size: clamp(1.25rem, 1.9vw, 1.75rem); line-height: 1.5; max-width: 34ch; }
+.story-locked-item { font-size: 1.0625rem; line-height: 1.8; }
+@media (min-width: 768px) {
+  .story-phrase { max-width: 26ch; }
+  .story-detail { font-size: 1rem; }
+  .story-narrative { max-width: 46ch; }
+}
+/* Short screens (360x640 and similar): shrink instead of scrolling */
+@media (max-height: 700px) {
+  .story-datum-short { font-size: clamp(3.5rem, 16vw, 6rem); }
+  .story-datum-long { font-size: clamp(2rem, 8vw, 3.5rem); }
+  .story-phrase { font-size: 1.25rem; }
+  .story-person { font-size: 1.375rem; }
+  .story-detail { font-size: 0.8125rem; line-height: 1.5; }
+  .story-narrative { font-size: 1.0625rem; line-height: 1.45; }
+  .story-locked-item { font-size: 0.9375rem; line-height: 1.5; }
+}
+
+.share-card-canvas { height: min(34dvh, 520px); width: auto; }
+@media (min-width: 768px) { .share-card-canvas { height: min(56dvh, 520px); } }
+@media (max-height: 700px) { .share-card-canvas { height: 22dvh; } }

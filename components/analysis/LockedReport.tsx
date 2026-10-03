@@ -13,9 +13,11 @@ interface LockedReportProps {
   access: PreviewAccess
   /** Auth token; null for guests */
   token: string | null
+  /** Privacy line shown at the bottom */
+  privacy?: string
 }
 
-export function LockedReport({ access, token }: LockedReportProps) {
+export function LockedReport({ access, token, privacy }: LockedReportProps) {
   const t = useTranslations('paywall')
   const router = useRouter()
   const { teaser } = access
@@ -32,21 +34,22 @@ export function LockedReport({ access, token }: LockedReportProps) {
   const canUpload = !!balance && (balance.is_premium || balance.credits > 0)
 
   return (
-    <section className="bg-[var(--surface)] border border-[var(--border)] p-6 md:p-10 flex flex-col gap-6">
-      <h2 className="text-xs uppercase tracking-widest text-[var(--text-muted)] font-mono">
+    <section className="flex flex-col gap-5">
+      <h2
+        className="story-datum-long [overflow-wrap:anywhere]"
+        style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', color: 'var(--warm)' }}
+      >
         {t('title')}
       </h2>
 
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col">
         {included.map(item => (
-          <li key={item} className="flex items-start gap-3 text-sm font-mono text-[var(--text-primary)] leading-relaxed">
-            <span aria-hidden="true" className="mt-2 w-1 h-1 shrink-0 bg-[var(--warm)]" />
+          <li key={item} className="flex items-start gap-3 story-locked-item text-[var(--text-primary)]">
+            <span aria-hidden="true" className="mt-[0.8em] w-1 h-1 shrink-0 bg-[var(--warm)]" />
             {item}
           </li>
         ))}
       </ul>
-
-      <div className="h-px bg-[var(--border)]" />
 
       <div className="flex flex-col gap-3" aria-live="polite">
         {!token && (
@@ -101,6 +104,7 @@ export function LockedReport({ access, token }: LockedReportProps) {
           <p className="text-xs font-mono text-[var(--text-muted)]">{t('unavailable')}</p>
         )}
       </div>
+      {privacy && <p className="story-detail">{privacy}</p>}
     </section>
   )
 }

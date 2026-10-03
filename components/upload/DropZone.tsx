@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 export const MAX_UPLOAD_BYTES = 20 * 1024 * 1024
 
@@ -12,8 +12,14 @@ interface DropZoneProps {
   error?: string | null
 }
 
+function formatSize(bytes: number, locale: string): string {
+  const fmt = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 })
+  return bytes < 1024 * 1024 ? `${fmt.format(bytes / 1024)} KB` : `${fmt.format(bytes / (1024 * 1024))} MB`
+}
+
 export function DropZone({ onFileSelect, selectedFile, error }: DropZoneProps) {
   const t = useTranslations('upload')
+  const locale = useLocale()
   const [isDragging, setIsDragging] = useState(false)
   const [dragError, setDragError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -111,7 +117,7 @@ export function DropZone({ onFileSelect, selectedFile, error }: DropZoneProps) {
                 {selectedFile.name}
               </span>
               <span className="text-xs font-mono text-[var(--text-muted)]">
-                {(selectedFile.size / 1024).toFixed(1)} KB — click to change
+                {t('fileSize', { size: formatSize(selectedFile.size, locale) })}
               </span>
             </motion.div>
           ) : (

@@ -93,25 +93,22 @@ export function ShareCard({ result }: { result: NonNullable<AnalysisResult['resu
   }
 
   return (
-    <section className="bg-[var(--surface)] border border-[var(--border)] p-4 md:p-6 flex flex-col sm:flex-row gap-6 items-start">
+    <section className="flex flex-col md:flex-row gap-5 md:items-end">
       <canvas
         ref={canvasRef}
         width={SHARE_CARD_WIDTH}
         height={SHARE_CARD_HEIGHT}
         role="img"
         aria-label={t('previewAlt')}
-        className="w-[162px] h-auto shrink-0 border border-[var(--border)]"
+        className="share-card-canvas shrink-0 self-start md:self-auto border border-[var(--border)]"
+        style={{ aspectRatio: '9 / 16' }}
       />
-      <div className="flex flex-col gap-3 min-w-0">
-        <h2 className="text-xs uppercase tracking-widest text-[var(--text-muted)] font-mono">
-          {t('title')}
-        </h2>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Button type="button" onClick={handleSave}>{t('save')}</Button>
-          {canShare && (
-            <Button type="button" variant="ghost" onClick={handleShare}>{t('share')}</Button>
-          )}
-        </div>
+      <div className="flex flex-col gap-3 w-full md:w-56">
+        <h2 className="sr-only">{t('title')}</h2>
+        <Button type="button" onClick={handleSave} className="w-full">{t('save')}</Button>
+        {canShare && (
+          <Button type="button" variant="ghost" onClick={handleShare} className="w-full">{t('share')}</Button>
+        )}
         <div aria-live="polite">
           {error && (
             <p role="alert" className="text-xs font-mono text-[var(--destructive)]">{t('error')}</p>

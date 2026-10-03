@@ -14,62 +14,60 @@ import { useTranslations } from 'next-intl'
 
 interface FrequencyChartProps {
   byMonth: Array<{ period: string; count: number }>
+  /** Chart height in px */
+  height?: number
 }
 
 const TOOLTIP_STYLE = {
-  backgroundColor: '#111111',
-  border: '1px solid #1f1f1f',
+  backgroundColor: 'var(--surface)',
+  border: '1px solid var(--border)',
   borderRadius: 0,
   fontFamily: 'var(--font-geist-mono, monospace)',
   fontSize: 11,
-  color: '#f0f0f0',
+  color: 'var(--text-primary)',
 }
 
-export function FrequencyChart({ byMonth }: FrequencyChartProps) {
+export function FrequencyChart({ byMonth, height = 200 }: FrequencyChartProps) {
   const t = useTranslations('charts')
   if (!byMonth.length) return null
 
   const maxCount = Math.max(...byMonth.map(d => d.count))
 
   return (
-    <div className="flex flex-col gap-4">
-      <span className="text-xs uppercase tracking-widest text-[var(--text-muted)] font-mono">
-        {t('frequencyChart')}
-      </span>
-
-      <div className="h-44 md:h-48">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={byMonth} margin={{ top: 4, right: 4, bottom: 0, left: -16 }} barCategoryGap="20%">
-            <CartesianGrid stroke="#1f1f1f" strokeDasharray="0" vertical={false} />
-            <XAxis
-              dataKey="period"
-              tick={{ fill: '#555555', fontSize: 9, fontFamily: 'monospace' }}
-              axisLine={false}
-              tickLine={false}
-              interval={Math.ceil(byMonth.length / 8) - 1}
-            />
-            <YAxis
-              tick={{ fill: '#555555', fontSize: 10, fontFamily: 'monospace' }}
-              axisLine={false}
-              tickLine={false}
-            />
-            <Tooltip
-              contentStyle={TOOLTIP_STYLE}
-              itemStyle={{ color: '#f0f0f0' }}
-              labelStyle={{ color: '#555555', marginBottom: 4 }}
-              cursor={{ fill: '#1f1f1f' }}
-            />
-            <Bar dataKey="count" radius={0}>
-              {byMonth.map((entry, i) => (
-                <Cell
-                  key={i}
-                  fill={entry.count > maxCount * 0.6 ? '#f0f0f0' : '#2a2a2a'}
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+    <div style={{ height }} role="img" aria-label={t('frequencyChart')}>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={byMonth} margin={{ top: 4, right: 4, bottom: 0, left: -16 }} barCategoryGap="20%">
+          <CartesianGrid stroke="var(--border)" strokeDasharray="0" vertical={false} />
+          <XAxis
+            dataKey="period"
+            tick={{ fill: 'var(--text-muted)', fontSize: 9, fontFamily: 'monospace' }}
+            axisLine={false}
+            tickLine={false}
+            interval={Math.ceil(byMonth.length / 6) - 1}
+          />
+          <YAxis
+            tick={{ fill: 'var(--text-muted)', fontSize: 10, fontFamily: 'monospace' }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <Tooltip
+            contentStyle={TOOLTIP_STYLE}
+            itemStyle={{ color: 'var(--text-primary)' }}
+            labelStyle={{ color: 'var(--text-muted)', marginBottom: 4 }}
+            cursor={{ fill: 'var(--border)' }}
+            separator=""
+            formatter={value => [t('tooltipMessages', { count: Number(value) }), '']}
+          />
+          <Bar dataKey="count" radius={0} isAnimationActive={false}>
+            {byMonth.map((entry, i) => (
+              <Cell
+                key={i}
+                fill={entry.count > maxCount * 0.6 ? 'var(--text-primary)' : 'var(--text-muted)'}
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   )
 }

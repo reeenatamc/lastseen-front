@@ -58,6 +58,8 @@ export interface InitiativeBalance {
   late_reply: DoubleText
   double_text: DoubleText
   evolution: Array<{ period: string } & Record<string, number>>
+  // 'low' when there are too few conversations to trust the shares
+  confidence?: { level: 'low' | 'ok'; reason: string | null }
 }
 
 export interface ClosingPhase {

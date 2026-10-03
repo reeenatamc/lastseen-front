@@ -35,13 +35,3 @@ export function validate(fields: Record<string, string>): ValidationResult {
 
   return { valid: Object.keys(errors).length === 0, errors }
 }
-
-// ── Formatting ────────────────────────────────────────────────────────────────
-
-export function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}

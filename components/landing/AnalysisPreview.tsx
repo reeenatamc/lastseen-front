@@ -1,16 +1,13 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 
 // Mock data — anonymized, representative of a real deteriorating chat
 const MOCK = {
-  narrative: "La conversación empezó con reciprocidad clara. Ambos iniciaban, ambos respondían. En el tercer mes algo cambió: los tiempos de respuesta empezaron a crecer y el peso de mantener el hilo cayó sobre uno solo.",
   participants: ['A', 'B'],
   initiativeShare: { A: 0.78, B: 0.22 },
   decayScore: 0.64,
-  trend: 'deteriorating',
-  sentimentA: 'warm',
-  sentimentB: 'distant',
 }
 
 function Bar({ value, warm }: { value: number; warm?: boolean }) {
@@ -28,10 +25,11 @@ function Bar({ value, warm }: { value: number; warm?: boolean }) {
 }
 
 export function AnalysisPreview() {
+  const t = useTranslations('landing.example')
   return (
     <section className="max-w-[560px] mx-auto w-full px-6 py-16">
       <p className="text-[10px] font-mono text-[var(--text-muted)] tracking-[0.25em] uppercase mb-8">
-        example output
+        {t('label')}
       </p>
 
       <motion.div
@@ -44,13 +42,13 @@ export function AnalysisPreview() {
         {/* Narrative card */}
         <div className="border border-[var(--border)] bg-[var(--surface)] p-6">
           <p className="text-[10px] font-mono text-[var(--text-muted)] tracking-widest uppercase mb-5">
-            LASTSEEN INTERPRETATION
+            {t('interpretation')}
           </p>
           <p
             className="text-base leading-[1.75] text-[var(--text-primary)]"
             style={{ fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif', fontStyle: 'italic' }}
           >
-            {MOCK.narrative}
+            {t('narrative')}
           </p>
         </div>
 
@@ -59,7 +57,7 @@ export function AnalysisPreview() {
           {/* Initiative */}
           <div className="border border-[var(--border)] bg-[var(--surface)] p-4">
             <p className="text-[10px] font-mono text-[var(--text-muted)] tracking-widest uppercase mb-4">
-              Initiative balance
+              {t('initiative')}
             </p>
             <div className="flex flex-col gap-3">
               {MOCK.participants.map(p => (
@@ -74,12 +72,12 @@ export function AnalysisPreview() {
           {/* Decay */}
           <div className="border border-[var(--border)] bg-[var(--surface)] p-4">
             <p className="text-[10px] font-mono text-[var(--text-muted)] tracking-widest uppercase mb-4">
-              Response decay
+              {t('decay')}
             </p>
             <div className="flex flex-col gap-3">
               <Bar value={MOCK.decayScore} warm />
               <span className="text-[10px] font-mono text-[var(--text-muted)]">
-                worsening over time
+                {t('worsening')}
               </span>
             </div>
           </div>
@@ -88,12 +86,12 @@ export function AnalysisPreview() {
         {/* Emotional drift */}
         <div className="border border-[var(--border)] bg-[var(--surface)] p-4">
           <p className="text-[10px] font-mono text-[var(--text-muted)] tracking-widest uppercase mb-4">
-            Tone per person
+            {t('tone')}
           </p>
           <div className="flex gap-6">
             {[
-              { name: 'A', tone: MOCK.sentimentA },
-              { name: 'B', tone: MOCK.sentimentB },
+              { name: 'A', tone: 'warm' },
+              { name: 'B', tone: 'distant' },
             ].map(({ name, tone }) => (
               <div key={name} className="flex items-center gap-2">
                 <span className="text-[10px] font-mono text-[var(--text-muted)]">{name}</span>
@@ -101,7 +99,7 @@ export function AnalysisPreview() {
                   className="text-[10px] font-mono"
                   style={{ color: tone === 'warm' ? 'var(--warm)' : 'var(--text-muted)' }}
                 >
-                  {tone}
+                  {t(tone)}
                 </span>
               </div>
             ))}
@@ -110,8 +108,8 @@ export function AnalysisPreview() {
       </motion.div>
 
       {/* Disclaimer */}
-      <p className="text-[10px] font-mono text-[var(--border)] mt-6 text-center tracking-wide">
-        anonymized example · not a real conversation
+      <p className="text-[10px] font-mono text-[var(--text-muted)] mt-6 text-center tracking-wide">
+        {t('disclaimer')}
       </p>
     </section>
   )
